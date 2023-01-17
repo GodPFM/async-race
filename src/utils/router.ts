@@ -8,7 +8,6 @@ type RouterEventsName = 'ROUTE';
 export type RouterInstance = InstanceType<typeof Router>;
 
 const paths = ['/', '/winners'];
-export type Paths = '/' | '/winners';
 
 export class Router extends EventEmitter {
   public pathParts: Array<string> = [];
@@ -18,10 +17,6 @@ export class Router extends EventEmitter {
     history.listen(({ location, action }) => {
       if (action !== 'REPLACE') this.processRoutes(location);
     });
-  }
-
-  getURL() {
-    return window.location.href;
   }
 
   init() {
@@ -36,18 +31,14 @@ export class Router extends EventEmitter {
     history.push(path);
   }
 
-  private push404() {
-    this.push('/404');
-  }
-
   processRoutes(location: Location) {
     this.pathParts = Array.from(location.pathname.match(/\/[a-z0-9]+/gi) || ['/']);
     if (paths.includes(this.pathParts[0]) && this.pathParts.length <= 2) {
-      this.emit('ROUTE', this.pathParts[0] as Paths, {
+      this.emit('ROUTE', this.pathParts[0] as string, {
         path: this.pathParts[1],
         search: decodeURI(location.search),
       });
-    } else this.push404();
+    } else this.push('/404');
   }
 
   setQueries(search: string) {
