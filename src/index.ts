@@ -16,7 +16,6 @@ const appView = new AppView(model);
 const mainContainer = appView.build();
 const garageView = new GarageView(model);
 const winnersView = new WinnersView(model);
-
-const appController = new AppController(model, appView, router);
 const garageController = new GarageController(model, garageView, router);
 const winnersController = new WinnersController(model, winnersView, router);
+const appController = new AppController(model, appView, router);
