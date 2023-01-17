@@ -1,23 +1,70 @@
 import EventEmitter from 'events';
 import type { AppModelInstance } from '../model/AppModel';
+import footer from '../../templates/footer.hbs';
+import header from '../../templates/header.html';
+import rsLogoSVG from '../../assets/images/rs_school_js.svg';
+import githubLogoSVG from '../../assets/images/github.svg';
 
-type AppViewEventsName = '';
+type AppViewEventsName = 'GARAGE_CLICK' | 'WINNERS_CLICK';
 
 export type AppViewInstance = InstanceType<typeof AppView>;
 
 export class AppView extends EventEmitter {
   private model: AppModelInstance;
 
+  private mainContainer: HTMLElement;
+
   constructor(model: AppModelInstance) {
     super();
+    this.mainContainer = document.createElement('main');
+    this.mainContainer.className = 'main';
     this.model = model;
   }
 
-  emit(eventName: string) {
+  build() {
+    const fragment = document.createElement('template');
+    const headerFragment = document.createElement('template');
+    const footerFragment = document.createElement('template');
+    headerFragment.innerHTML = header;
+    footerFragment.innerHTML = footer({
+      rsLogo: rsLogoSVG,
+      githubLogo: githubLogoSVG,
+    });
+    fragment.content.append(headerFragment.content);
+    fragment.content.append(this.mainContainer);
+    fragment.content.append(footerFragment.content);
+    document.body.append(fragment.content);
+    this.addListenerToHeaderBtns();
+    return this.mainContainer;
+  }
+
+  addListenerToHeaderBtns() {
+    const btns = document.querySelectorAll('.header__btn');
+    if (btns) {
+      btns.forEach((el) => {
+        const element = el as HTMLElement;
+        element.addEventListener('click', () => {
+          switch (element.dataset.to) {
+            case 'garage':
+              console.log('click');
+              this.emit('GARAGE_CLICK');
+              break;
+            case 'winners':
+              this.emit('WINNERS_CLICK');
+              break;
+            default:
+              break;
+          }
+        });
+      });
+    }
+  }
+
+  emit(eventName: AppViewEventsName) {
     return super.emit(eventName);
   }
 
-  on(eventName: string, callback: (data: string) => void) {
+  on(eventName: AppViewEventsName, callback: (data: string) => void) {
     return super.on(eventName, callback);
   }
 }

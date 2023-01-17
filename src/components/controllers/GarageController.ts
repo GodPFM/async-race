@@ -1,4 +1,4 @@
-import type { AppModelInstance } from '@/components/model/AppModel';
+import type { AppModelInstance } from '../model/AppModel';
 import { RouterInstance } from '../../utils/router';
 import { GarageViewInstance } from '../views/GarageView';
 
@@ -13,6 +13,12 @@ export class GarageController {
     this.model = model;
     this.view = view;
     this.router = router;
+    model.on('CHANGE_PAGE', (page) => {
+      console.log(page);
+      if (page === '/') {
+        this.view.build();
+      }
+    });
   }
 }
 

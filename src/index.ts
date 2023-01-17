@@ -1,3 +1,5 @@
+import './styles/styles.css';
+
 import { Router } from './utils/router';
 import { AppModel } from './components/model/AppModel';
 import { AppView } from './components/views/AppView';
@@ -11,6 +13,7 @@ const router = new Router();
 const model = new AppModel();
 
 const appView = new AppView(model);
+const mainContainer = appView.build();
 const garageView = new GarageView(model);
 const winnersView = new WinnersView(model);
 

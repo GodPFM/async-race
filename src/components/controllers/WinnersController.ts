@@ -1,4 +1,4 @@
-import type { AppModelInstance } from '@/components/model/AppModel';
+import type { AppModelInstance } from '../model/AppModel';
 import { RouterInstance } from '../../utils/router';
 import { WinnersViewInstance } from '../views/WinnersView';
 
@@ -13,6 +13,9 @@ export class WinnersController {
     this.model = model;
     this.view = view;
     this.router = router;
+    model.on('CHANGE_PAGE', (page: string) => {
+      if (page === '/winners') this.view.build();
+    });
   }
 }
 

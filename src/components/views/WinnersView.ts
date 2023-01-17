@@ -13,11 +13,18 @@ export class WinnersView extends EventEmitter {
     this.model = model;
   }
 
-  emit(eventName: string) {
+  build() {
+    const container = document.querySelector('.main');
+    if (container) {
+      container.textContent = 'winners';
+    }
+  }
+
+  emit(eventName: WinnersViewEventsName) {
     return super.emit(eventName);
   }
 
-  on(eventName: string, callback: (data: string) => void) {
+  on(eventName: WinnersViewEventsName, callback: (data: string) => void) {
     return super.on(eventName, callback);
   }
 }

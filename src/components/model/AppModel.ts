@@ -1,15 +1,23 @@
 import EventEmitter from 'events';
-import { Paths } from '../../utils/router';
 
-type AppModelEventsName = '';
+type AppModelEventsName = 'CHANGE_PAGE';
 export type AppModelInstance = InstanceType<typeof AppModel>;
 
 export class AppModel extends EventEmitter {
-  emit(eventName: string, data: string) {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+  constructor() {
+    super();
+  }
+
+  changePage(page: string) {
+    this.emit('CHANGE_PAGE', page);
+  }
+
+  emit(eventName: AppModelEventsName, data: string) {
     return super.emit(eventName, data);
   }
 
-  on(eventName: string, callback: (data: string) => void) {
+  on(eventName: AppModelEventsName, callback: (data: string) => void) {
     return super.on(eventName, callback);
   }
 }

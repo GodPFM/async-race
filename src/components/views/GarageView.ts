@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import type { AppModelInstance } from '@/components/model/AppModel';
+import type { AppModelInstance } from '../model/AppModel';
 
 type GarageViewEventsName = '';
 
@@ -11,6 +11,13 @@ export class GarageView extends EventEmitter {
   constructor(model: AppModelInstance) {
     super();
     this.model = model;
+  }
+
+  build() {
+    const container = document.querySelector('.main');
+    if (container) {
+      container.textContent = 'garage';
+    }
   }
 
   emit(eventName: string) {
