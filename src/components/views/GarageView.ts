@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import type { AppModelInstance } from '../model/AppModel';
+import garage from '../../templates/garage.hbs';
 
 type GarageViewEventsName = '';
 
@@ -16,7 +17,7 @@ export class GarageView extends EventEmitter {
   build() {
     const container = document.querySelector('.main');
     if (container) {
-      container.textContent = 'garage';
+      container.innerHTML = garage({});
     }
   }
 
