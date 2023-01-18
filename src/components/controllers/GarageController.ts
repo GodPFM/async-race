@@ -25,12 +25,18 @@ export class GarageController {
         this.view.addCarInPage(itemData);
       }
     });
+    model.on('CAR_DELETED', (data) => {
+      this.view.deleteCarFromPage(data);
+    });
     this.view.on('CREATE_BTN_CLICK', () => {
       const name = (document.querySelector('.main__create-car-name') as HTMLInputElement).value;
       const color = (document.querySelector('.main__create-car-color') as HTMLInputElement).value;
       if (name && color) {
         this.model.addCar(name, color);
       }
+    });
+    this.view.on('DELETE_CAR', (data) => {
+      this.model.removeCar(data);
     });
   }
 }

@@ -1,8 +1,8 @@
 import EventEmitter from 'events';
 import * as stream from 'stream';
-import { addCar } from '../../utils/loader';
+import { addCar, deleteCar } from '../../utils/loader';
 
-type AppModelEventsName = 'CHANGE_PAGE' | 'CAR_ADDED';
+type AppModelEventsName = 'CHANGE_PAGE' | 'CAR_ADDED' | 'CAR_DELETED';
 export type AppModelInstance = InstanceType<typeof AppModel>;
 
 export class AppModel extends EventEmitter {
@@ -20,6 +20,14 @@ export class AppModel extends EventEmitter {
     if (result) {
       const objectWithData = await result.json();
       this.emit('CAR_ADDED', undefined, objectWithData);
+    }
+  }
+
+  async removeCar(id: string) {
+    const result = await deleteCar(id);
+    console.log(result);
+    if (result) {
+      this.emit('CAR_DELETED', id);
     }
   }
 

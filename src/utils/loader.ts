@@ -26,6 +26,18 @@ export async function getCars(page?: number, limit?: number) {
   return null;
 }
 
+export async function deleteCar(id: string) {
+  try {
+    const url = `http://127.0.0.1:3000/garage/${id}`;
+    const result = await fetch(url, {
+      method: 'DELETE',
+    });
+    return result.status === 200;
+  } catch (er) {
+    return false;
+  }
+}
+
 export async function addCar(name: string, color: string) {
   try {
     const url = 'http://127.0.0.1:3000/garage';
