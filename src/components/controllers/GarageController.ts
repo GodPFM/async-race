@@ -28,6 +28,9 @@ export class GarageController {
     model.on('CAR_DELETED', (data) => {
       this.view.deleteCarFromPage(data);
     });
+    model.on('CAR_UPDATED', (data, itemData) => {
+      this.view.updateCar(itemData);
+    });
     this.view.on('CREATE_BTN_CLICK', () => {
       const name = (document.querySelector('.main__create-car-name') as HTMLInputElement).value;
       const color = (document.querySelector('.main__create-car-color') as HTMLInputElement).value;
@@ -37,6 +40,9 @@ export class GarageController {
     });
     this.view.on('DELETE_CAR', (data) => {
       this.model.removeCar(data);
+    });
+    this.view.on('UPDATE_CAR', (data, itemData) => {
+      this.model.updateCar(itemData);
     });
   }
 }

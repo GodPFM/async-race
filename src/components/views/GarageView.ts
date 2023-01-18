@@ -3,8 +3,9 @@ import type { AppModelInstance } from '../model/AppModel';
 import garage from '../../templates/garage.html';
 import car from '../../templates/car.html';
 import { getCars } from '../../utils/loader';
+import { ItemData } from '../../utils/types';
 
-type GarageViewEventsName = 'CREATE_BTN_CLICK' | 'DELETE_CAR';
+type GarageViewEventsName = 'CREATE_BTN_CLICK' | 'DELETE_CAR' | 'UPDATE_CAR';
 
 type CarsResponce = {
   name: string;
@@ -36,7 +37,16 @@ export class GarageView extends EventEmitter {
     createButton?.addEventListener('click', () => {
       this.emit('CREATE_BTN_CLICK');
       (document.querySelector('.main__create-car-name') as HTMLInputElement).value = '';
-      (document.querySelector('.main__create-car-color') as HTMLInputElement).value = '';
+      (document.querySelector('.main__create-car-color') as HTMLInputElement).value = '#ffffff';
+    });
+    const updateButton = document.querySelector('.main__update-car-submit') as HTMLElement;
+    updateButton?.addEventListener('click', () => {
+      const newName = (document.querySelector('.main__update-car-name') as HTMLInputElement).value;
+      const newColor = (document.querySelector('.main__update-car-color') as HTMLInputElement).value;
+      const id = Number(updateButton.dataset.id);
+      if (newName && newColor && id) {
+        this.emit('UPDATE_CAR', undefined, { name: newName, color: newColor, id });
+      }
     });
   }
 
@@ -64,8 +74,22 @@ export class GarageView extends EventEmitter {
       console.log(target);
       if ((target as HTMLElement).classList.contains('main__car-remove-btn')) {
         const { id } = (el as HTMLElement).dataset;
-        console.log(id);
         this.emit('DELETE_CAR', id);
+      }
+      if ((target as HTMLElement).classList.contains('main__car-select-btn')) {
+        const { id } = (el as HTMLElement).dataset;
+        const updateNameField = document.querySelector('.main__update-car-name') as HTMLInputElement;
+        const updateColorField = document.querySelector('.main__update-car-color') as HTMLInputElement;
+        const updateButton = document.querySelector('.main__update-car-submit') as HTMLElement;
+        if (updateNameField && updateColorField && updateButton) {
+          const name = el.querySelector('.main__car-name')?.textContent;
+          const color = el.querySelector('.carColor')?.getAttribute('fill');
+          if (name && color) {
+            updateNameField.value = name;
+            updateColorField.value = color;
+            updateButton.dataset.id = id;
+          }
+        }
       }
     });
   }
@@ -108,11 +132,26 @@ export class GarageView extends EventEmitter {
     }
   }
 
-  emit(eventName: GarageViewEventsName, data?: string) {
-    return super.emit(eventName, data);
+  updateCar(item: ItemData) {
+    const itemOnPage = document.querySelector(`.main__race-car[data-id="${item.id}"]`);
+    if (itemOnPage) {
+      const name = itemOnPage.querySelector('.main__car-name');
+      const color = itemOnPage.querySelector('.carColor');
+      if (name && color) {
+        name.textContent = item.name;
+        color.setAttribute('fill', item.color);
+      }
+    }
   }
 
-  on(eventName: GarageViewEventsName, callback: (data: string) => void) {
+  emit(eventName: GarageViewEventsName, data?: string, itemData?: { name: string; color: string; id: number }) {
+    return super.emit(eventName, data, itemData);
+  }
+
+  on(
+    eventName: GarageViewEventsName,
+    callback: (data: string, itemData?: { name: string; color: string; id: number }) => void
+  ) {
     return super.on(eventName, callback);
   }
 }

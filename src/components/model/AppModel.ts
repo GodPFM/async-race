@@ -1,8 +1,8 @@
 import EventEmitter from 'events';
-import * as stream from 'stream';
-import { addCar, deleteCar } from '../../utils/loader';
+import { addCar, deleteCar, updateCar } from '../../utils/loader';
+import { ItemData } from '../../utils/types';
 
-type AppModelEventsName = 'CHANGE_PAGE' | 'CAR_ADDED' | 'CAR_DELETED';
+type AppModelEventsName = 'CHANGE_PAGE' | 'CAR_ADDED' | 'CAR_DELETED' | 'CAR_UPDATED';
 export type AppModelInstance = InstanceType<typeof AppModel>;
 
 export class AppModel extends EventEmitter {
@@ -25,20 +25,26 @@ export class AppModel extends EventEmitter {
 
   async removeCar(id: string) {
     const result = await deleteCar(id);
-    console.log(result);
     if (result) {
       this.emit('CAR_DELETED', id);
     }
   }
 
-  emit(eventName: AppModelEventsName, data?: string, itemData?: { name: string; color: string; id: number }) {
+  async updateCar(itemData?: ItemData) {
+    if (itemData) {
+      const result = await updateCar(itemData);
+      if (result) {
+        const object = await result.json();
+        this.emit('CAR_UPDATED', undefined, object);
+      }
+    }
+  }
+
+  emit(eventName: AppModelEventsName, data?: string, itemData?: ItemData) {
     return super.emit(eventName, data, itemData);
   }
 
-  on(
-    eventName: AppModelEventsName,
-    callback: (data: string, itemData: { name: string; color: string; id: number }) => void
-  ) {
+  on(eventName: AppModelEventsName, callback: (data: string, itemData: ItemData) => void) {
     return super.on(eventName, callback);
   }
 }

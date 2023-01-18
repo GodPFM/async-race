@@ -1,4 +1,7 @@
 // eslint-disable-next-line import/prefer-default-export
+
+import { ItemData } from './types';
+
 export async function getCars(page?: number, limit?: number) {
   try {
     let url = 'http://127.0.0.1:3000/garage';
@@ -35,6 +38,25 @@ export async function deleteCar(id: string) {
     return result.status === 200;
   } catch (er) {
     return false;
+  }
+}
+
+export async function updateCar(itemData: ItemData) {
+  try {
+    const url = `http://127.0.0.1:3000/garage/${itemData.id}`;
+    const request = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name: itemData.name, color: itemData.color }),
+    });
+    if (request.status === 200) {
+      return request;
+    }
+    return null;
+  } catch (e) {
+    return null;
   }
 }
 
