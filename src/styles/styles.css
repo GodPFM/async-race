@@ -13,6 +13,40 @@ main {
   flex-grow: 1;
 }
 
+.main__pagination {
+  margin-bottom: 10px;
+}
+
+.main__race-car {
+  border-bottom: dashed black 2px;
+}
+
+.main__car-settings {
+  display: flex;
+}
+
+.main__car-name {
+  margin: 0;
+}
+
+.main__car-settings-btn {
+  margin-right: 10px;
+}
+
+.main__car-svg {
+  max-height: 50px;
+}
+
+.main__car-track {
+  max-width: 90%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.main__car-finish-flag {
+  max-height: 50px;
+}
+
 .wrapper {
   max-width: 1200px;
   margin: 0 auto;

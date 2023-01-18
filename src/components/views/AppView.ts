@@ -1,9 +1,7 @@
 import EventEmitter from 'events';
 import type { AppModelInstance } from '../model/AppModel';
-import footer from '../../templates/footer.hbs';
+import footer from '../../templates/footer.html';
 import header from '../../templates/header.html';
-import rsLogoSVG from '../../assets/images/rs_school_js.svg';
-import githubLogoSVG from '../../assets/images/github.svg';
 
 type AppViewEventsName = 'GARAGE_CLICK' | 'WINNERS_CLICK';
 
@@ -26,10 +24,7 @@ export class AppView extends EventEmitter {
     const headerFragment = document.createElement('template');
     const footerFragment = document.createElement('template');
     headerFragment.innerHTML = header;
-    footerFragment.innerHTML = footer({
-      rsLogo: rsLogoSVG,
-      githubLogo: githubLogoSVG,
-    });
+    footerFragment.innerHTML = footer;
     fragment.content.append(headerFragment.content);
     fragment.content.append(this.mainContainer);
     fragment.content.append(footerFragment.content);
