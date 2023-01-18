@@ -36,8 +36,7 @@ export class GarageView extends EventEmitter {
     const createButton = document.querySelector('.main__create-car-submit');
     createButton?.addEventListener('click', () => {
       this.emit('CREATE_BTN_CLICK');
-      (document.querySelector('.main__create-car-name') as HTMLInputElement).value = '';
-      (document.querySelector('.main__create-car-color') as HTMLInputElement).value = '#ffffff';
+      this.resetInputfields('create');
     });
     const updateButton = document.querySelector('.main__update-car-submit') as HTMLElement;
     updateButton?.addEventListener('click', () => {
@@ -140,7 +139,16 @@ export class GarageView extends EventEmitter {
       if (name && color) {
         name.textContent = item.name;
         color.setAttribute('fill', item.color);
+        this.resetInputfields('update');
       }
+    }
+  }
+
+  resetInputfields(field: string) {
+    (document.querySelector(`.main__${field}-car-name`) as HTMLInputElement).value = '';
+    (document.querySelector(`.main__${field}-car-color`) as HTMLInputElement).value = '#000000';
+    if (field === 'update') {
+      (document.querySelector('.main__update-car-submit') as HTMLElement).dataset.id = '';
     }
   }
 
