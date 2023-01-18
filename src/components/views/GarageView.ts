@@ -2,10 +2,9 @@ import EventEmitter from 'events';
 import type { AppModelInstance } from '../model/AppModel';
 import garage from '../../templates/garage.html';
 import car from '../../templates/car.html';
-import { getCars } from '../../utils/loader';
 import { ItemData } from '../../utils/types';
 
-type GarageViewEventsName = 'CREATE_BTN_CLICK' | 'DELETE_CAR' | 'UPDATE_CAR';
+type GarageViewEventsName = 'CREATE_BTN_CLICK' | 'DELETE_CAR' | 'UPDATE_CAR' | 'GENERATE_CARS' | 'CHANGE_GARAGE_PAGE';
 
 type CarsResponce = {
   name: string;
@@ -25,18 +24,32 @@ export class GarageView extends EventEmitter {
     this.model = model;
   }
 
-  build(cars: CarsType) {
+  build(cars: [ItemData], totalCount: number) {
     const container = document.querySelector('.main');
     if (container) {
       container.innerHTML = garage;
     }
-    if (cars && cars.length !== 0) {
+    if (cars) {
       this.buildCars(cars);
     }
-    const createButton = document.querySelector('.main__create-car-submit');
-    createButton?.addEventListener('click', () => {
+    const count = document.querySelector('.main__garage-count-number');
+    if (count) {
+      count.textContent = String(totalCount);
+    }
+    document.querySelector('.main__create-car-submit')?.addEventListener('click', () => {
       this.emit('CREATE_BTN_CLICK');
       this.resetInputfields('create');
+    });
+    document.querySelector('.main__race-generate')?.addEventListener('click', () => {
+      this.emit('GENERATE_CARS');
+    });
+    document.querySelector('.main__pagination-btn--prev')?.addEventListener('click', () => {
+      const number = document.querySelector('.main__page-number')?.textContent;
+      if (number) this.emit('CHANGE_GARAGE_PAGE', String(Number(number) - 1));
+    });
+    document.querySelector('.main__pagination-btn--next')?.addEventListener('click', () => {
+      const number = document.querySelector('.main__page-number')?.textContent;
+      if (number) this.emit('CHANGE_GARAGE_PAGE', String(Number(number) + 1));
     });
     const updateButton = document.querySelector('.main__update-car-submit') as HTMLElement;
     updateButton?.addEventListener('click', () => {
@@ -57,6 +70,7 @@ export class GarageView extends EventEmitter {
       carsTemplate.content.append(carTemplate.content);
     });
     if (container) {
+      container.innerHTML = '';
       container.append(carsTemplate.content.cloneNode(true));
     }
     const carsOnPage = document.querySelectorAll('.main__race-car');
@@ -114,8 +128,13 @@ export class GarageView extends EventEmitter {
   addCarInPage(item: { name: string; color: string; id: number }) {
     const template = this.buildCar(item);
     const container = document.querySelector('.main__race');
-    if (container) {
+    const itemsCount = document.querySelectorAll('.main__race-car').length;
+    if (container && itemsCount < 7) {
       container.append(template.content.cloneNode(true));
+    }
+    const count = document.querySelector('.main__garage-count-number');
+    if (count) {
+      count.textContent = String(Number(count.textContent) + 1);
     }
     const carOnPage = document.querySelector(`.main__race-car[data-id='${item.id}']`);
     if (carOnPage) {
@@ -128,6 +147,10 @@ export class GarageView extends EventEmitter {
     console.log(item, id);
     if (item) {
       item.remove();
+      const count = document.querySelector('.main__garage-count-number');
+      if (count) {
+        count.textContent = String(Number(count.textContent) - 1);
+      }
     }
   }
 
@@ -149,6 +172,13 @@ export class GarageView extends EventEmitter {
     (document.querySelector(`.main__${field}-car-color`) as HTMLInputElement).value = '#000000';
     if (field === 'update') {
       (document.querySelector('.main__update-car-submit') as HTMLElement).dataset.id = '';
+    }
+  }
+
+  changePage(page: number) {
+    const pageNumberSpan = document.querySelector('.main__page-number');
+    if (pageNumberSpan) {
+      pageNumberSpan.textContent = String(page);
     }
   }
 

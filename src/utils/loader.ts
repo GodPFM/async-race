@@ -2,7 +2,7 @@
 
 import { ItemData } from './types';
 
-export async function getCars(page?: number, limit?: number) {
+export async function getCars(page?: number, limit?: number): Promise<[[ItemData], number] | null> {
   try {
     let url = 'http://127.0.0.1:3000/garage';
     if (page || limit) {
@@ -22,7 +22,8 @@ export async function getCars(page?: number, limit?: number) {
     const response = await fetch(url, {
       method: 'GET',
     });
-    return await response.json();
+    const totalCount = await response.headers.get('X-Total-Count');
+    return [await response.json(), Number(totalCount)];
   } catch (er) {
     console.error(er);
   }

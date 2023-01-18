@@ -17,7 +17,9 @@ export class GarageController {
     model.on('CHANGE_PAGE', async (page) => {
       if (page === '/') {
         const cars = await getCars(1, 7);
-        this.view.build(cars);
+        if (cars) {
+          this.view.build(cars[0], cars[1]);
+        }
       }
     });
     model.on('CAR_ADDED', (data, itemData) => {
@@ -43,6 +45,23 @@ export class GarageController {
     });
     this.view.on('UPDATE_CAR', (data, itemData) => {
       this.model.updateCar(itemData);
+    });
+    this.view.on('GENERATE_CARS', () => {
+      this.model.generateOneHundredCars();
+    });
+    this.view.on('CHANGE_GARAGE_PAGE', async (data) => {
+      if (Number(data) !== 0) {
+        const carsFromServer = await this.model.getItems(Number(data));
+        if (carsFromServer) {
+          const result = await this.model.getItems(Number(data));
+          if (result) {
+            if (result[0].length) {
+              this.view.changePage(result[1]);
+              this.view.buildCars(result[0]);
+            }
+          }
+        }
+      }
     });
   }
 }
