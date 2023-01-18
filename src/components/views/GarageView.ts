@@ -81,7 +81,7 @@ export class GarageView extends EventEmitter {
     }
   }
 
-  addCarListener(el: Element) {
+  addCarListener(el: Element): void {
     el.addEventListener('click', (e) => {
       const { target } = e;
       console.log(target);
@@ -107,7 +107,7 @@ export class GarageView extends EventEmitter {
     });
   }
 
-  buildCar(item: { name: string; color: string; id: number }) {
+  buildCar(item: { name: string; color: string; id: number }): HTMLTemplateElement {
     const carTemplate = document.createElement('template');
     carTemplate.innerHTML = car;
     const name = carTemplate.content.querySelector('.main__car-name');
@@ -125,7 +125,7 @@ export class GarageView extends EventEmitter {
     return carTemplate;
   }
 
-  addCarInPage(item: { name: string; color: string; id: number }) {
+  addCarInPage(item: { name: string; color: string; id: number }): void {
     const template = this.buildCar(item);
     const container = document.querySelector('.main__race');
     const itemsCount = document.querySelectorAll('.main__race-car').length;
@@ -142,7 +142,7 @@ export class GarageView extends EventEmitter {
     }
   }
 
-  deleteCarFromPage(id: string) {
+  deleteCarFromPage(id: string): void {
     const item = document.querySelector(`.main__race-car[data-id='${id}']`);
     console.log(item, id);
     if (item) {
@@ -150,6 +150,11 @@ export class GarageView extends EventEmitter {
       const count = document.querySelector('.main__garage-count-number');
       if (count) {
         count.textContent = String(Number(count.textContent) - 1);
+      }
+      const items = document.querySelectorAll('.main__race-car');
+      if (!items.length) {
+        const number = document.querySelector('.main__page-number')?.textContent;
+        if (number) this.emit('CHANGE_GARAGE_PAGE', String(Number(number) - 1));
       }
     }
   }

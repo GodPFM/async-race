@@ -30,7 +30,7 @@ export async function getCars(page?: number, limit?: number): Promise<[[ItemData
   return null;
 }
 
-export async function deleteCar(id: string) {
+export async function deleteCar(id: string): Promise<boolean> {
   try {
     const url = `http://127.0.0.1:3000/garage/${id}`;
     const result = await fetch(url, {
@@ -42,7 +42,7 @@ export async function deleteCar(id: string) {
   }
 }
 
-export async function updateCar(itemData: ItemData) {
+export async function updateCar(itemData: ItemData): Promise<ItemData | null> {
   try {
     const url = `http://127.0.0.1:3000/garage/${itemData.id}`;
     const request = await fetch(url, {
@@ -53,7 +53,7 @@ export async function updateCar(itemData: ItemData) {
       body: JSON.stringify({ name: itemData.name, color: itemData.color }),
     });
     if (request.status === 200) {
-      return request;
+      return await request.json();
     }
     return null;
   } catch (e) {
@@ -61,7 +61,7 @@ export async function updateCar(itemData: ItemData) {
   }
 }
 
-export async function addCar(name: string, color: string) {
+export async function addCar(name: string, color: string): Promise<ItemData | null> {
   try {
     const url = 'http://127.0.0.1:3000/garage';
     const response = await fetch(url, {
@@ -72,7 +72,8 @@ export async function addCar(name: string, color: string) {
       body: JSON.stringify({ name, color }),
     });
     if (response.status === 201) {
-      return response;
+      const objectWithData = await response.json();
+      return objectWithData;
     }
     return null;
   } catch (er) {

@@ -19,8 +19,7 @@ export class AppModel extends EventEmitter {
   async addCar(name: string, color: string) {
     const result = await addCar(name, color);
     if (result) {
-      const objectWithData = await result.json();
-      this.emit('CAR_ADDED', undefined, objectWithData);
+      this.emit('CAR_ADDED', undefined, result);
     }
   }
 
@@ -35,8 +34,7 @@ export class AppModel extends EventEmitter {
     if (itemData) {
       const result = await updateCar(itemData);
       if (result) {
-        const object = await result.json();
-        this.emit('CAR_UPDATED', undefined, object);
+        this.emit('CAR_UPDATED', undefined, result);
       }
     }
   }
