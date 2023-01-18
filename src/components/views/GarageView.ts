@@ -35,6 +35,8 @@ export class GarageView extends EventEmitter {
     const createButton = document.querySelector('.main__create-car-submit');
     createButton?.addEventListener('click', () => {
       this.emit('CREATE_BTN_CLICK');
+      (document.querySelector('.main__create-car-name') as HTMLInputElement).value = '';
+      (document.querySelector('.main__create-car-color') as HTMLInputElement).value = '';
     });
   }
 
