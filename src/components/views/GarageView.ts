@@ -2,14 +2,26 @@ import EventEmitter from 'events';
 import type { AppModelInstance } from '../model/AppModel';
 import garage from '../../templates/garage.html';
 import car from '../../templates/car.html';
-import { ItemData } from '../../utils/types';
+import { CarParam, ItemData } from '../../utils/types';
 
-type GarageViewEventsName = 'CREATE_BTN_CLICK' | 'DELETE_CAR' | 'UPDATE_CAR' | 'GENERATE_CARS' | 'CHANGE_GARAGE_PAGE';
+type GarageViewEventsName =
+  | 'CREATE_BTN_CLICK'
+  | 'DELETE_CAR'
+  | 'UPDATE_CAR'
+  | 'GENERATE_CARS'
+  | 'CHANGE_GARAGE_PAGE'
+  | 'CAR_START'
+  | 'START_ENGINE'
+  | 'SWITCH_DRIVE_MODE';
 
 type CarsResponce = {
   name: string;
   color: string;
   id: number;
+};
+
+type AnimationCarData = {
+  [key: string]: number;
 };
 
 type CarsType = Array<CarsResponce>;
@@ -19,9 +31,12 @@ export type GarageViewInstance = InstanceType<typeof GarageView>;
 export class GarageView extends EventEmitter {
   private model: AppModelInstance;
 
+  private animationCarData: AnimationCarData;
+
   constructor(model: AppModelInstance) {
     super();
     this.model = model;
+    this.animationCarData = {} as AnimationCarData;
   }
 
   build(cars: [ItemData], totalCount: number) {
@@ -84,13 +99,11 @@ export class GarageView extends EventEmitter {
   addCarListener(el: Element): void {
     el.addEventListener('click', (e) => {
       const { target } = e;
-      console.log(target);
+      const { id } = (el as HTMLElement).dataset;
       if ((target as HTMLElement).classList.contains('main__car-remove-btn')) {
-        const { id } = (el as HTMLElement).dataset;
         this.emit('DELETE_CAR', id);
       }
       if ((target as HTMLElement).classList.contains('main__car-select-btn')) {
-        const { id } = (el as HTMLElement).dataset;
         const updateNameField = document.querySelector('.main__update-car-name') as HTMLInputElement;
         const updateColorField = document.querySelector('.main__update-car-color') as HTMLInputElement;
         const updateButton = document.querySelector('.main__update-car-submit') as HTMLElement;
@@ -103,6 +116,14 @@ export class GarageView extends EventEmitter {
             updateButton.dataset.id = id;
           }
         }
+      }
+      if ((target as HTMLElement).classList.contains('main__car-start')) {
+        this.emit('CAR_START');
+      }
+      if ((target as HTMLElement).classList.contains('main__car-start')) {
+        const button = target as HTMLButtonElement;
+        button.disabled = true;
+        this.emit('START_ENGINE', id);
       }
     });
   }
@@ -187,14 +208,50 @@ export class GarageView extends EventEmitter {
     }
   }
 
-  emit(eventName: GarageViewEventsName, data?: string, itemData?: { name: string; color: string; id: number }) {
+  prepareCar(id: string, carParams: CarParam) {
+    const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
+    if (item) {
+      item.dataset.velocity = String(carParams.velocity);
+      item.dataset.distance = String(carParams.distance);
+      this.emit('SWITCH_DRIVE_MODE', id);
+    }
+  }
+
+  carDrive(id: string) {
+    const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
+    console.log(2);
+    if (item) {
+      const velocity = Number(item.dataset.velocity);
+      const distance = Number(item.dataset.distance);
+      const startBtn = item.querySelector('.main__car-start')?.classList.add('ready');
+      const carSvg = item.querySelector('.main__car-svg') as HTMLElement;
+      if (carSvg) {
+        let start: number | null = null;
+        const requestId: number = window.requestAnimationFrame(function race(time) {
+          if (!start) start = time;
+          const progress = time - start;
+          const carComputedStyles = window.getComputedStyle(carSvg);
+          const leftValue = Number.parseInt(carComputedStyles.getPropertyValue('left'), 10);
+          let leftNewValue = (progress * velocity) / (distance / 100);
+          if (leftNewValue > 100) {
+            leftNewValue = 100;
+          }
+          carSvg.style.left = String(`${leftNewValue}%`);
+          if (leftNewValue < 100) {
+            requestAnimationFrame(race);
+          }
+        });
+        this.animationCarData[id] = requestId;
+        console.log(this.animationCarData);
+      }
+    }
+  }
+
+  emit(eventName: GarageViewEventsName, data?: string, itemData?: ItemData) {
     return super.emit(eventName, data, itemData);
   }
 
-  on(
-    eventName: GarageViewEventsName,
-    callback: (data: string, itemData?: { name: string; color: string; id: number }) => void
-  ) {
+  on(eventName: GarageViewEventsName, callback: (data: string, itemData: ItemData) => void) {
     return super.on(eventName, callback);
   }
 }

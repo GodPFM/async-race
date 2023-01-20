@@ -29,12 +29,18 @@ main {
   margin: 0;
 }
 
+.main__car-start.ready {
+  background: red;
+}
+
 .main__car-settings-btn {
   margin-right: 10px;
 }
 
 .main__car-svg {
   max-height: 50px;
+  position: relative;
+  left: 0%;
 }
 
 .main__car-track {

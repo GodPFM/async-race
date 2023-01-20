@@ -30,9 +30,10 @@ export class GarageController {
     model.on('CAR_DELETED', (data) => {
       this.view.deleteCarFromPage(data);
     });
-    model.on('CAR_UPDATED', (data, itemData) => {
+    model.on('CAR_UPDATED', (data, itemData, carParams) => {
       this.view.updateCar(itemData);
     });
+    model.on('ENGINE_START_SUCCESS', (data, itemData, carParams) => {});
     this.view.on('CREATE_BTN_CLICK', () => {
       const name = (document.querySelector('.main__create-car-name') as HTMLInputElement).value;
       const color = (document.querySelector('.main__create-car-color') as HTMLInputElement).value;
@@ -61,6 +62,19 @@ export class GarageController {
             }
           }
         }
+      }
+    });
+    this.view.on('START_ENGINE', async (data) => {
+      const result = await this.model.startCarEngine(data);
+      if (result) {
+        this.view.prepareCar(data, result);
+      }
+    });
+    this.view.on('SWITCH_DRIVE_MODE', async (data) => {
+      const result = await this.model.startCarRace(data);
+      console.log(result);
+      if (result) {
+        this.view.carDrive(data);
       }
     });
   }

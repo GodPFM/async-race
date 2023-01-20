@@ -1,9 +1,9 @@
 import EventEmitter from 'events';
-import { addCar, deleteCar, getCars, updateCar } from '../../utils/loader';
-import { ItemData } from '../../utils/types';
+import { addCar, carStart, deleteCar, getCars, startStopEngine, updateCar } from '../../utils/loader';
+import { CarParam, ItemData } from '../../utils/types';
 import { carsArray } from '../../utils/objectWithCars';
 
-type AppModelEventsName = 'CHANGE_PAGE' | 'CAR_ADDED' | 'CAR_DELETED' | 'CAR_UPDATED';
+type AppModelEventsName = 'CHANGE_PAGE' | 'CAR_ADDED' | 'CAR_DELETED' | 'CAR_UPDATED' | 'ENGINE_START_SUCCESS';
 export type AppModelInstance = InstanceType<typeof AppModel>;
 
 export class AppModel extends EventEmitter {
@@ -71,11 +71,24 @@ export class AppModel extends EventEmitter {
     return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
   }
 
-  emit(eventName: AppModelEventsName, data?: string, itemData?: ItemData) {
+  async startCarEngine(id: string): Promise<CarParam | null> {
+    const result = await startStopEngine(id, 'start');
+    if (result) {
+      return result;
+    }
+    return null;
+  }
+
+  async startCarRace(id: string) {
+    const result = await carStart(id);
+    return result;
+  }
+
+  emit(eventName: AppModelEventsName, data?: string, itemData?: ItemData, carParams?: CarParam) {
     return super.emit(eventName, data, itemData);
   }
 
-  on(eventName: AppModelEventsName, callback: (data: string, itemData: ItemData) => void) {
+  on(eventName: AppModelEventsName, callback: (data: string, itemData: ItemData, carParams: CarParam) => void) {
     return super.on(eventName, callback);
   }
 }

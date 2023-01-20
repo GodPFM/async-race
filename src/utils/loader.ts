@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/prefer-default-export
 
-import { ItemData } from './types';
+import { CarParam, ItemData } from './types';
 
 export async function getCars(page?: number, limit?: number): Promise<[[ItemData], number] | null> {
   try {
@@ -78,5 +78,39 @@ export async function addCar(name: string, color: string): Promise<ItemData | nu
     return null;
   } catch (er) {
     return null;
+  }
+}
+
+export async function startStopEngine(id: string, action: string): Promise<CarParam | null> {
+  try {
+    const url = `http://127.0.0.1:3000/engine?id=${id}&status=${action}`;
+    const response = await fetch(url, {
+      method: 'PATCH',
+    });
+    if (response.status === 200) {
+      return await response.json();
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+export async function carStart(id: string): Promise<boolean | null> {
+  try {
+    const url = `http://127.0.0.1:3000/engine?id=${id}&status=drive`;
+    const response = await fetch(url, {
+      method: 'PATCH',
+    });
+    if (response.status === 200) {
+      return true;
+    }
+    if (response.status === 500) {
+      return null;
+    }
+    console.log(response);
+    return false;
+  } catch (e) {
+    return false;
   }
 }
