@@ -72,7 +72,7 @@ export class AppModel extends EventEmitter {
   }
 
   async startCarEngine(id: string): Promise<CarParam | null> {
-    const result = await startStopEngine(id, 'start');
+    const result = await startStopEngine(id, 'started');
     if (result) {
       return result;
     }
@@ -82,6 +82,14 @@ export class AppModel extends EventEmitter {
   async startCarRace(id: string) {
     const result = await carStart(id);
     return result;
+  }
+
+  async resetCar(id: string) {
+    const result = await startStopEngine(id, 'stopped');
+    if (result) {
+      return true;
+    }
+    return false;
   }
 
   emit(eventName: AppModelEventsName, data?: string, itemData?: ItemData, carParams?: CarParam) {

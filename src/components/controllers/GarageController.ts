@@ -70,6 +70,12 @@ export class GarageController {
         this.view.prepareCar(data, result);
       }
     });
+    this.view.on('CAR_RESET', async (data) => {
+      const result = await this.model.resetCar(data);
+      if (result) {
+        this.view.resetCar(data);
+      }
+    });
     this.view.on('SWITCH_DRIVE_MODE', async (data) => {
       const result = await this.model.startCarRace(data);
       console.log(result);

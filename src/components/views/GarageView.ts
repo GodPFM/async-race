@@ -12,7 +12,8 @@ type GarageViewEventsName =
   | 'CHANGE_GARAGE_PAGE'
   | 'CAR_START'
   | 'START_ENGINE'
-  | 'SWITCH_DRIVE_MODE';
+  | 'SWITCH_DRIVE_MODE'
+  | 'CAR_RESET';
 
 type CarsResponce = {
   name: string;
@@ -118,12 +119,14 @@ export class GarageView extends EventEmitter {
         }
       }
       if ((target as HTMLElement).classList.contains('main__car-start')) {
-        this.emit('CAR_START');
-      }
-      if ((target as HTMLElement).classList.contains('main__car-start')) {
         const button = target as HTMLButtonElement;
         button.disabled = true;
         this.emit('START_ENGINE', id);
+      }
+      if ((target as HTMLElement).classList.contains('main__car-stop')) {
+        const button = target as HTMLButtonElement;
+        button.disabled = true;
+        this.emit('CAR_RESET', id);
       }
     });
   }
@@ -219,15 +222,15 @@ export class GarageView extends EventEmitter {
 
   carDrive(id: string) {
     const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
-    console.log(2);
     if (item) {
       const velocity = Number(item.dataset.velocity);
       const distance = Number(item.dataset.distance);
       const startBtn = item.querySelector('.main__car-start')?.classList.add('ready');
+      (item.querySelector('.main__car-stop') as HTMLButtonElement).disabled = false;
       const carSvg = item.querySelector('.main__car-svg') as HTMLElement;
       if (carSvg) {
         let start: number | null = null;
-        const requestId: number = window.requestAnimationFrame(function race(time) {
+        const singleCarAnimation = (time: DOMHighResTimeStamp) => {
           if (!start) start = time;
           const progress = time - start;
           const carComputedStyles = window.getComputedStyle(carSvg);
@@ -238,12 +241,29 @@ export class GarageView extends EventEmitter {
           }
           carSvg.style.left = String(`${leftNewValue}%`);
           if (leftNewValue < 100) {
-            requestAnimationFrame(race);
+            this.animationCarData[id] = requestAnimationFrame(singleCarAnimation);
           }
-        });
+        };
+        const requestId: number = window.requestAnimationFrame(singleCarAnimation);
         this.animationCarData[id] = requestId;
-        console.log(this.animationCarData);
       }
+    }
+  }
+
+  resetCar(id: string) {
+    const carRequestId = this.animationCarData[id];
+    window.cancelAnimationFrame(carRequestId);
+    const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
+    const svgCar = item.querySelector('.main__car-svg') as HTMLElement;
+    const startBtn = item.querySelector('.main__car-start') as HTMLButtonElement;
+    const stopBtn = item.querySelector('.main__car-stop') as HTMLButtonElement;
+    if (startBtn && stopBtn) {
+      startBtn.disabled = false;
+      startBtn.className = 'main__car-start';
+      stopBtn.disabled = true;
+    }
+    if (svgCar) {
+      svgCar.style.left = '0%';
     }
   }
 
