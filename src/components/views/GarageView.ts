@@ -13,7 +13,8 @@ type GarageViewEventsName =
   | 'CAR_START'
   | 'START_ENGINE'
   | 'SWITCH_DRIVE_MODE'
-  | 'CAR_RESET';
+  | 'CAR_RESET'
+  | 'CAR_RESET_ALL';
 
 type CarsResponce = {
   name: string;
@@ -66,6 +67,9 @@ export class GarageView extends EventEmitter {
     document.querySelector('.main__pagination-btn--next')?.addEventListener('click', () => {
       const number = document.querySelector('.main__page-number')?.textContent;
       if (number) this.emit('CHANGE_GARAGE_PAGE', String(Number(number) + 1));
+    });
+    document.querySelector('.main__race-reset')?.addEventListener('click', () => {
+      this.emit('CAR_RESET_ALL');
     });
     const updateButton = document.querySelector('.main__update-car-submit') as HTMLElement;
     updateButton?.addEventListener('click', () => {
@@ -220,32 +224,34 @@ export class GarageView extends EventEmitter {
     }
   }
 
-  carDrive(id: string) {
+  carDrive(id: string, isSuccess: boolean) {
     const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
     if (item) {
       const velocity = Number(item.dataset.velocity);
       const distance = Number(item.dataset.distance);
-      const startBtn = item.querySelector('.main__car-start')?.classList.add('ready');
+      item.querySelector('.main__car-start')?.classList.add('ready');
       (item.querySelector('.main__car-stop') as HTMLButtonElement).disabled = false;
       const carSvg = item.querySelector('.main__car-svg') as HTMLElement;
       if (carSvg) {
         let start: number | null = null;
+        const randNumber = Math.floor(Math.random() * (80 - 20) + 20);
         const singleCarAnimation = (time: DOMHighResTimeStamp) => {
           if (!start) start = time;
           const progress = time - start;
-          const carComputedStyles = window.getComputedStyle(carSvg);
-          const leftValue = Number.parseInt(carComputedStyles.getPropertyValue('left'), 10);
           let leftNewValue = (progress * velocity) / (distance / 100);
-          if (leftNewValue > 100) {
-            leftNewValue = 100;
+          if (isSuccess) {
+            if (leftNewValue > 100) {
+              leftNewValue = 100;
+            }
+          } else if (leftNewValue > randNumber) {
+            leftNewValue = randNumber;
           }
           carSvg.style.left = String(`${leftNewValue}%`);
-          if (leftNewValue < 100) {
+          if ((leftNewValue < 100 && isSuccess) || (leftNewValue < randNumber && !isSuccess)) {
             this.animationCarData[id] = requestAnimationFrame(singleCarAnimation);
           }
         };
-        const requestId: number = window.requestAnimationFrame(singleCarAnimation);
-        this.animationCarData[id] = requestId;
+        this.animationCarData[id] = window.requestAnimationFrame(singleCarAnimation);
       }
     }
   }

@@ -1,6 +1,8 @@
 // eslint-disable-next-line import/prefer-default-export
-
 import { CarParam, ItemData } from './types';
+
+let controller = new AbortController();
+export const { signal } = controller;
 
 export async function getCars(page?: number, limit?: number): Promise<[[ItemData], number] | null> {
   try {
@@ -81,9 +83,32 @@ export async function addCar(name: string, color: string): Promise<ItemData | nu
   }
 }
 
-export async function startStopEngine(id: string, action: string): Promise<CarParam | null> {
+export async function startEngine(id: string): Promise<CarParam | null> {
   try {
-    const url = `http://127.0.0.1:3000/engine?id=${id}&status=${action}`;
+    if (controller.signal.aborted) {
+      controller = new AbortController();
+    }
+    const url = `http://127.0.0.1:3000/engine?id=${id}&status=started`;
+    const response = await fetch(url, {
+      method: 'PATCH',
+      signal: controller.signal,
+    });
+    if (response.status === 200) {
+      return await response.json();
+    }
+    return null;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+}
+
+export async function stopEngine(id: string, isAll: boolean): Promise<CarParam | null> {
+  try {
+    if (isAll) {
+      controller.abort();
+    }
+    const url = `http://127.0.0.1:3000/engine?id=${id}&status=stopped`;
     const response = await fetch(url, {
       method: 'PATCH',
     });
@@ -101,6 +126,7 @@ export async function carStart(id: string): Promise<boolean | null> {
     const url = `http://127.0.0.1:3000/engine?id=${id}&status=drive`;
     const response = await fetch(url, {
       method: 'PATCH',
+      signal: controller.signal,
     });
     if (response.status === 200) {
       return true;

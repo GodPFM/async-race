@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { addCar, carStart, deleteCar, getCars, startStopEngine, updateCar } from '../../utils/loader';
+import { addCar, carStart, deleteCar, getCars, startEngine, stopEngine, updateCar } from '../../utils/loader';
 import { CarParam, ItemData } from '../../utils/types';
 import { carsArray } from '../../utils/objectWithCars';
 
@@ -72,7 +72,7 @@ export class AppModel extends EventEmitter {
   }
 
   async startCarEngine(id: string): Promise<CarParam | null> {
-    const result = await startStopEngine(id, 'started');
+    const result = await startEngine(id);
     if (result) {
       return result;
     }
@@ -84,8 +84,8 @@ export class AppModel extends EventEmitter {
     return result;
   }
 
-  async resetCar(id: string) {
-    const result = await startStopEngine(id, 'stopped');
+  async resetCar(id: string, isAll: boolean) {
+    const result = await stopEngine(id, isAll);
     if (result) {
       return true;
     }

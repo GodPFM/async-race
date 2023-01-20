@@ -71,17 +71,34 @@ export class GarageController {
       }
     });
     this.view.on('CAR_RESET', async (data) => {
-      const result = await this.model.resetCar(data);
+      const result = await this.model.resetCar(data, false);
       if (result) {
         this.view.resetCar(data);
       }
     });
     this.view.on('SWITCH_DRIVE_MODE', async (data) => {
       const result = await this.model.startCarRace(data);
-      console.log(result);
       if (result) {
-        this.view.carDrive(data);
+        this.view.carDrive(data, true);
       }
+      if (result === null) {
+        this.view.carDrive(data, false);
+      }
+    });
+    this.view.on('CAR_RESET_ALL', async (data) => {
+      const arrayWithIdToReset: Array<string> = [];
+      document.querySelectorAll('.main__race-car')?.forEach((el) => {
+        const element = el as HTMLElement;
+        if (element.dataset.id) {
+          arrayWithIdToReset.push(element.dataset.id);
+        }
+      });
+      const arrayWithPromises = arrayWithIdToReset.map((item) => this.model.resetCar(item, true));
+      await Promise.all(arrayWithPromises).then((value) => {
+        arrayWithIdToReset.forEach((el) => {
+          this.view.resetCar(el);
+        });
+      });
     });
   }
 }
