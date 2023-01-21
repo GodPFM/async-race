@@ -33,7 +33,6 @@ export class GarageController {
     model.on('CAR_UPDATED', (data, itemData, carParams) => {
       this.view.updateCar(itemData);
     });
-    model.on('ENGINE_START_SUCCESS', (data, itemData, carParams) => {});
     this.view.on('CREATE_BTN_CLICK', () => {
       const name = (document.querySelector('.main__create-car-name') as HTMLInputElement).value;
       const color = (document.querySelector('.main__create-car-color') as HTMLInputElement).value;
@@ -67,7 +66,7 @@ export class GarageController {
     this.view.on('START_ENGINE', async (data) => {
       const result = await this.model.startCarEngine(data);
       if (result) {
-        this.view.prepareCar(data, result);
+        this.view.prepareCar(data, result, false);
       }
     });
     this.view.on('CAR_RESET', async (data) => {
@@ -85,9 +84,9 @@ export class GarageController {
         this.view.carDrive(data, false);
       }
     });
-    this.view.on('CAR_RESET_ALL', async (data) => {
+    this.view.on('CAR_RESET_ALL', async (data, itemData, carItems) => {
       const arrayWithIdToReset: Array<string> = [];
-      document.querySelectorAll('.main__race-car')?.forEach((el) => {
+      carItems?.forEach((el) => {
         const element = el as HTMLElement;
         if (element.dataset.id) {
           arrayWithIdToReset.push(element.dataset.id);
@@ -97,6 +96,35 @@ export class GarageController {
       await Promise.all(arrayWithPromises).then((value) => {
         arrayWithIdToReset.forEach((el) => {
           this.view.resetCar(el);
+        });
+      });
+    });
+    this.view.on('CAR_START_ALL', async (data, itemData, carItems) => {
+      const arrayWithIdToReady: Array<string> = [];
+      console.log(carItems);
+      carItems?.forEach((el) => {
+        const element = el as HTMLElement;
+        if (element.dataset.id) {
+          arrayWithIdToReady.push(element.dataset.id);
+        }
+      });
+      const result = arrayWithIdToReady.map((item) => this.model.startCarEngine(item));
+      await Promise.all(result).then((value) => {
+        value.forEach((el, index) => {
+          if (el) {
+            this.view.prepareCar(arrayWithIdToReady[index], el, true);
+          }
+        });
+      });
+      const startRacePromiseArray = arrayWithIdToReady.map((item) => this.model.startCarRace(item));
+      await Promise.all(startRacePromiseArray).then((value) => {
+        value.forEach((el, index) => {
+          if (el) {
+            this.view.carDrive(arrayWithIdToReady[index], true);
+          }
+          if (el === null) {
+            this.view.carDrive(arrayWithIdToReady[index], false);
+          }
         });
       });
     });

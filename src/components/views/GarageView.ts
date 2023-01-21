@@ -14,7 +14,8 @@ type GarageViewEventsName =
   | 'START_ENGINE'
   | 'SWITCH_DRIVE_MODE'
   | 'CAR_RESET'
-  | 'CAR_RESET_ALL';
+  | 'CAR_RESET_ALL'
+  | 'CAR_START_ALL';
 
 type CarsResponce = {
   name: string;
@@ -69,7 +70,16 @@ export class GarageView extends EventEmitter {
       if (number) this.emit('CHANGE_GARAGE_PAGE', String(Number(number) + 1));
     });
     document.querySelector('.main__race-reset')?.addEventListener('click', () => {
-      this.emit('CAR_RESET_ALL');
+      const carItems = document.querySelectorAll('.main__race-car');
+      if (carItems) {
+        this.emit('CAR_RESET_ALL', undefined, undefined, carItems);
+      }
+    });
+    document.querySelector('.main__race-start')?.addEventListener('click', () => {
+      const carItems = document.querySelectorAll('.main__race-car');
+      if (carItems) {
+        this.emit('CAR_START_ALL', undefined, undefined, carItems);
+      }
     });
     const updateButton = document.querySelector('.main__update-car-submit') as HTMLElement;
     updateButton?.addEventListener('click', () => {
@@ -215,12 +225,14 @@ export class GarageView extends EventEmitter {
     }
   }
 
-  prepareCar(id: string, carParams: CarParam) {
+  prepareCar(id: string, carParams: CarParam, isRaceAll: boolean) {
     const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
     if (item) {
       item.dataset.velocity = String(carParams.velocity);
       item.dataset.distance = String(carParams.distance);
-      this.emit('SWITCH_DRIVE_MODE', id);
+      if (!isRaceAll) {
+        this.emit('SWITCH_DRIVE_MODE', id);
+      }
     }
   }
 
@@ -273,11 +285,14 @@ export class GarageView extends EventEmitter {
     }
   }
 
-  emit(eventName: GarageViewEventsName, data?: string, itemData?: ItemData) {
-    return super.emit(eventName, data, itemData);
+  emit(eventName: GarageViewEventsName, data?: string, itemData?: ItemData, carItems?: NodeListOf<Element>) {
+    return super.emit(eventName, data, itemData, carItems);
   }
 
-  on(eventName: GarageViewEventsName, callback: (data: string, itemData: ItemData) => void) {
+  on(
+    eventName: GarageViewEventsName,
+    callback: (data: string, itemData: ItemData, carItems: NodeListOf<Element>) => void
+  ) {
     return super.on(eventName, callback);
   }
 }
