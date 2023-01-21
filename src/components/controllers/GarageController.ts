@@ -78,10 +78,10 @@ export class GarageController {
     this.view.on('SWITCH_DRIVE_MODE', async (data) => {
       const result = await this.model.startCarRace(data);
       if (result) {
-        this.view.carDrive(data, true);
+        this.view.carDrive(data, true, false);
       }
       if (result === null) {
-        this.view.carDrive(data, false);
+        this.view.carDrive(data, false, false);
       }
     });
     this.view.on('CAR_RESET_ALL', async (data, itemData, carItems) => {
@@ -92,16 +92,17 @@ export class GarageController {
           arrayWithIdToReset.push(element.dataset.id);
         }
       });
+      this.view.showModalLoading();
       const arrayWithPromises = arrayWithIdToReset.map((item) => this.model.resetCar(item, true));
-      await Promise.all(arrayWithPromises).then((value) => {
-        arrayWithIdToReset.forEach((el) => {
-          this.view.resetCar(el);
-        });
+      await Promise.all(arrayWithPromises);
+      this.view.showModalLoading();
+      arrayWithIdToReset.forEach((el) => {
+        this.view.resetCar(el);
       });
     });
     this.view.on('CAR_START_ALL', async (data, itemData, carItems) => {
       const arrayWithIdToReady: Array<string> = [];
-      console.log(carItems);
+      this.view.showModalLoading();
       carItems?.forEach((el) => {
         const element = el as HTMLElement;
         if (element.dataset.id) {
@@ -118,15 +119,19 @@ export class GarageController {
       });
       const startRacePromiseArray = arrayWithIdToReady.map((item) => this.model.startCarRace(item));
       await Promise.all(startRacePromiseArray).then((value) => {
+        this.view.showModalLoading();
         value.forEach((el, index) => {
           if (el) {
-            this.view.carDrive(arrayWithIdToReady[index], true);
+            this.view.carDrive(arrayWithIdToReady[index], true, true);
           }
           if (el === null) {
-            this.view.carDrive(arrayWithIdToReady[index], false);
+            this.view.carDrive(arrayWithIdToReady[index], false, true);
           }
         });
       });
+    });
+    this.view.on('WINNER_FOUND', (id, itemData) => {
+      console.log(itemData);
     });
   }
 }

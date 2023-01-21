@@ -15,7 +15,8 @@ type GarageViewEventsName =
   | 'SWITCH_DRIVE_MODE'
   | 'CAR_RESET'
   | 'CAR_RESET_ALL'
-  | 'CAR_START_ALL';
+  | 'CAR_START_ALL'
+  | 'WINNER_FOUND';
 
 type CarsResponce = {
   name: string;
@@ -236,7 +237,7 @@ export class GarageView extends EventEmitter {
     }
   }
 
-  carDrive(id: string, isSuccess: boolean) {
+  carDrive(id: string, isSuccess: boolean, isRace: boolean) {
     const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
     if (item) {
       const velocity = Number(item.dataset.velocity);
@@ -254,6 +255,9 @@ export class GarageView extends EventEmitter {
           if (isSuccess) {
             if (leftNewValue > 100) {
               leftNewValue = 100;
+              if (isRace) {
+                this.emit('WINNER_FOUND', id, { name: '', color: '', id: Number(id), time: progress });
+              }
             }
           } else if (leftNewValue > randNumber) {
             leftNewValue = randNumber;
@@ -265,6 +269,13 @@ export class GarageView extends EventEmitter {
         };
         this.animationCarData[id] = window.requestAnimationFrame(singleCarAnimation);
       }
+    }
+  }
+
+  showModalLoading() {
+    const modalWindow = document.querySelector('.modal-window');
+    if (modalWindow) {
+      modalWindow.classList.toggle('hidden');
     }
   }
 
