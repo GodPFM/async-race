@@ -2,10 +2,6 @@
   box-sizing: border-box;
 }
 
-.hidden {
-  display: none;
-}
-
 body {
   display: flex;
   min-height: 100vh;
@@ -70,6 +66,14 @@ main {
   height: 100vh;
   background: rgba(0, 0, 0, 50%);
   color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden {
+  display: none;
 }
 
 .footer {

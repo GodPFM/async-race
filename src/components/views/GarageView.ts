@@ -242,6 +242,7 @@ export class GarageView extends EventEmitter {
     if (item) {
       const velocity = Number(item.dataset.velocity);
       const distance = Number(item.dataset.distance);
+      let name = item.querySelector('.main__car-name')?.textContent;
       item.querySelector('.main__car-start')?.classList.add('ready');
       (item.querySelector('.main__car-stop') as HTMLButtonElement).disabled = false;
       const carSvg = item.querySelector('.main__car-svg') as HTMLElement;
@@ -256,7 +257,10 @@ export class GarageView extends EventEmitter {
             if (leftNewValue > 100) {
               leftNewValue = 100;
               if (isRace) {
-                this.emit('WINNER_FOUND', id, { name: '', color: '', id: Number(id), time: progress });
+                if (!name) {
+                  name = '';
+                }
+                this.emit('WINNER_FOUND', id, { name, color: '', id: Number(id), time: progress });
               }
             }
           } else if (leftNewValue > randNumber) {
@@ -272,10 +276,23 @@ export class GarageView extends EventEmitter {
     }
   }
 
-  showModalLoading() {
+  showModalWindow(action: string, itemData?: ItemData) {
     const modalWindow = document.querySelector('.modal-window');
     if (modalWindow) {
-      modalWindow.classList.toggle('hidden');
+      const message = modalWindow.querySelector('.modal-window__message');
+      if (action === 'loading') {
+        if (message) {
+          message.textContent = 'Loading';
+          modalWindow.classList.toggle('hidden');
+        }
+      }
+      if (action === 'winner') {
+        if (itemData?.time && message) {
+          message.textContent = `Winner is ${itemData.name} with time ${(itemData.time / 1000).toFixed(2)} s`;
+        }
+        modalWindow.classList.remove('hidden');
+        setTimeout(() => modalWindow.classList.add('hidden'), 3000);
+      }
     }
   }
 

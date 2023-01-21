@@ -1,15 +1,28 @@
 import EventEmitter from 'events';
-import { addCar, carStart, deleteCar, getCars, startEngine, stopEngine, updateCar } from '../../utils/loader';
-import { CarParam, ItemData } from '../../utils/types';
+import {
+  addCar,
+  carStart,
+  createWinner,
+  deleteCar,
+  getCars,
+  getWinner,
+  startEngine,
+  stopEngine,
+  updateCar,
+  updateWinnerInfo,
+} from '../../utils/loader';
+import { CarParam, ItemData, WinnerParams } from '../../utils/types';
 import { carsArray } from '../../utils/objectWithCars';
 
 type AppModelEventsName = 'CHANGE_PAGE' | 'CAR_ADDED' | 'CAR_DELETED' | 'CAR_UPDATED' | 'ENGINE_START_SUCCESS';
 export type AppModelInstance = InstanceType<typeof AppModel>;
 
 export class AppModel extends EventEmitter {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+  public isWinnerInRace: boolean;
+
   constructor() {
     super();
+    this.isWinnerInRace = false;
   }
 
   changePage(page: string) {
@@ -63,6 +76,30 @@ export class AppModel extends EventEmitter {
     return undefined;
   }
 
+  async addWinner(id: string, time: number | undefined) {
+    if (time) {
+      const checkWinner: WinnerParams | boolean | null = await getWinner(id);
+      const convertedTime = (time / 1000).toFixed(2);
+      if (!checkWinner) {
+        const winnerParams: WinnerParams = {
+          id: Number(id),
+          wins: 1,
+          time: Number(convertedTime),
+        };
+        const createWinnerRequest = await createWinner(winnerParams);
+      }
+      if (checkWinner && typeof checkWinner !== 'boolean') {
+        console.log(checkWinner);
+        checkWinner.wins += 1;
+        if (checkWinner.time > Number(convertedTime)) {
+          checkWinner.time = Number(convertedTime);
+        }
+        console.log(checkWinner);
+        const updateCarResponse = await updateWinnerInfo(checkWinner);
+      }
+    }
+  }
+
   getRandomNumber(to: number) {
     return Math.floor(Math.random() * (to + 1));
   }
@@ -80,6 +117,7 @@ export class AppModel extends EventEmitter {
   }
 
   async startCarRace(id: string) {
+    this.isWinnerInRace = false;
     const result = await carStart(id);
     return result;
   }

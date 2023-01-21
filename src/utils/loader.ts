@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/prefer-default-export
-import { CarParam, ItemData } from './types';
+import { CarParam, ItemData, WinnerParams } from './types';
 
 let controller = new AbortController();
 export const { signal } = controller;
@@ -138,5 +138,56 @@ export async function carStart(id: string): Promise<boolean | null> {
     return false;
   } catch (e) {
     return false;
+  }
+}
+
+export async function getWinner(id: string): Promise<WinnerParams | boolean | null> {
+  try {
+    const url = `http://127.0.0.1:3000/winners/${id}`;
+    const response = await fetch(url, {
+      method: 'GET',
+    });
+    if (response.status === 200) {
+      return await response.json();
+    }
+    if (response.status === 404) {
+      return false;
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+export async function createWinner(winnerParams: WinnerParams): Promise<boolean> {
+  try {
+    const url = `http://127.0.0.1:3000/winners`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(winnerParams),
+    });
+    console.log(response, winnerParams);
+    return response.status === 201;
+  } catch (e) {
+    return false;
+  }
+}
+
+export async function updateWinnerInfo(winnerParams: WinnerParams): Promise<boolean | null> {
+  try {
+    const url = `http://127.0.0.1:3000/winners/${winnerParams.id}`;
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ wins: winnerParams.wins, time: winnerParams.time }),
+    });
+    return response.status === 200;
+  } catch (e) {
+    return null;
   }
 }

@@ -92,17 +92,17 @@ export class GarageController {
           arrayWithIdToReset.push(element.dataset.id);
         }
       });
-      this.view.showModalLoading();
+      this.view.showModalWindow('loading');
       const arrayWithPromises = arrayWithIdToReset.map((item) => this.model.resetCar(item, true));
       await Promise.all(arrayWithPromises);
-      this.view.showModalLoading();
+      this.view.showModalWindow('loading');
       arrayWithIdToReset.forEach((el) => {
         this.view.resetCar(el);
       });
     });
     this.view.on('CAR_START_ALL', async (data, itemData, carItems) => {
       const arrayWithIdToReady: Array<string> = [];
-      this.view.showModalLoading();
+      this.view.showModalWindow('loading');
       carItems?.forEach((el) => {
         const element = el as HTMLElement;
         if (element.dataset.id) {
@@ -119,7 +119,7 @@ export class GarageController {
       });
       const startRacePromiseArray = arrayWithIdToReady.map((item) => this.model.startCarRace(item));
       await Promise.all(startRacePromiseArray).then((value) => {
-        this.view.showModalLoading();
+        this.view.showModalWindow('loading');
         value.forEach((el, index) => {
           if (el) {
             this.view.carDrive(arrayWithIdToReady[index], true, true);
@@ -131,7 +131,11 @@ export class GarageController {
       });
     });
     this.view.on('WINNER_FOUND', (id, itemData) => {
-      console.log(itemData);
+      if (!this.model.isWinnerInRace) {
+        this.model.isWinnerInRace = true;
+        const result = this.model.addWinner(id, itemData.time);
+        this.view.showModalWindow('winner', itemData);
+      }
     });
   }
 }
