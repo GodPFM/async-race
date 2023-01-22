@@ -14,14 +14,6 @@ export class GarageController {
     this.model = model;
     this.view = view;
     this.router = router;
-    model.on('CHANGE_PAGE', async (page) => {
-      if (page === '/') {
-        const cars = await getCars(1, 7);
-        if (cars) {
-          this.view.build(cars[0], cars[1]);
-        }
-      }
-    });
     this.view.on('CREATE_BTN_CLICK', () => {
       const name = (document.querySelector('.main__create-car-name') as HTMLInputElement).value;
       const color = (document.querySelector('.main__create-car-color') as HTMLInputElement).value;
