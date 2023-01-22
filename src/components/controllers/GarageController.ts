@@ -70,9 +70,6 @@ export class GarageController {
       const arrayWithPromises = arrayWithIdToReset.map((item) => this.model.resetCar(item, true));
       await Promise.all(arrayWithPromises);
       this.view.showModalWindow('loading');
-      arrayWithIdToReset.forEach((el) => {
-        this.model.resetCar(el, false);
-      });
     });
     this.view.on('CAR_START_ALL', async (data, itemData, carItems) => {
       const arrayWithIdToReady: Array<string> = [];

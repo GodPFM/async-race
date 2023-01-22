@@ -133,8 +133,10 @@ export class AppModel extends EventEmitter {
 
   async resetCar(id: string, isAll: boolean) {
     const result = await stopEngine(id, isAll);
+    console.log(id);
     if (result) {
       this.emit('CAR_RESETED', id);
+      return true;
     }
     return false;
   }
