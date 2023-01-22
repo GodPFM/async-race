@@ -134,7 +134,6 @@ export async function carStart(id: string): Promise<boolean | null> {
     if (response.status === 500) {
       return null;
     }
-    console.log(response);
     return false;
   } catch (e) {
     return false;

@@ -41,6 +41,47 @@ export class GarageView extends EventEmitter {
     super();
     this.model = model;
     this.animationCarData = {} as AnimationCarData;
+    model.on('GET_CARS_FOR_CHANGE_PAGE', (data, cars) => {
+      if (Array.isArray(cars)) {
+        this.changePage(Number(data));
+        this.buildCars(cars);
+      } else {
+        console.error('Cars is not Array');
+      }
+    });
+    model.on('CAR_ADDED', (data, itemData) => {
+      if (!Array.isArray(itemData)) {
+        this.addCarInPage(itemData);
+      }
+    });
+    model.on('CAR_UPDATED', (data, itemData, carParams) => {
+      if (!Array.isArray(itemData)) {
+        this.updateCar(itemData);
+      } else {
+        console.error('itemData is array');
+      }
+    });
+    model.on('CAR_DELETED', (data) => {
+      this.deleteCarFromPage(data);
+      const page = document.querySelector('.main__page-number');
+      const items = document.querySelectorAll('.main__race-car');
+      if (page) {
+        if (!items.length) {
+          this.emit('CHANGE_GARAGE_PAGE', String(Number(page.textContent) - 1));
+        }
+        this.emit('CHANGE_GARAGE_PAGE', String(page.textContent));
+      }
+    });
+    model.on('CAR_RESETED', (data) => {
+      this.resetCar(data);
+    });
+    model.on('CAR_READY', (data, itemData, carParams, isRaceAll) => {
+      console.log('emitted', isRaceAll);
+      if (isRaceAll !== undefined) {
+        console.log(data, carParams, isRaceAll);
+        this.prepareCar(data, carParams, isRaceAll);
+      }
+    });
   }
 
   build(cars: [ItemData], totalCount: number) {
@@ -146,7 +187,7 @@ export class GarageView extends EventEmitter {
     });
   }
 
-  buildCar(item: { name: string; color: string; id: number }): HTMLTemplateElement {
+  buildCar(item: ItemData): HTMLTemplateElement {
     const carTemplate = document.createElement('template');
     carTemplate.innerHTML = car;
     const name = carTemplate.content.querySelector('.main__car-name');
@@ -227,6 +268,7 @@ export class GarageView extends EventEmitter {
   }
 
   prepareCar(id: string, carParams: CarParam, isRaceAll: boolean) {
+    console.log('test');
     const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
     if (item) {
       item.dataset.velocity = String(carParams.velocity);

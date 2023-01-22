@@ -22,17 +22,6 @@ export class GarageController {
         }
       }
     });
-    model.on('CAR_ADDED', (data, itemData) => {
-      if (itemData) {
-        this.view.addCarInPage(itemData);
-      }
-    });
-    model.on('CAR_DELETED', (data) => {
-      this.view.deleteCarFromPage(data);
-    });
-    model.on('CAR_UPDATED', (data, itemData, carParams) => {
-      this.view.updateCar(itemData);
-    });
     this.view.on('CREATE_BTN_CLICK', () => {
       const name = (document.querySelector('.main__create-car-name') as HTMLInputElement).value;
       const color = (document.querySelector('.main__create-car-color') as HTMLInputElement).value;
@@ -51,29 +40,14 @@ export class GarageController {
     });
     this.view.on('CHANGE_GARAGE_PAGE', async (data) => {
       if (Number(data) !== 0) {
-        const carsFromServer = await this.model.getItems(Number(data));
-        if (carsFromServer) {
-          const result = await this.model.getItems(Number(data));
-          if (result) {
-            if (result[0].length) {
-              this.view.changePage(result[1]);
-              this.view.buildCars(result[0]);
-            }
-          }
-        }
+        await this.model.getItems(Number(data));
       }
     });
     this.view.on('START_ENGINE', async (data) => {
-      const result = await this.model.startCarEngine(data);
-      if (result) {
-        this.view.prepareCar(data, result, false);
-      }
+      await this.model.startCarEngine(data, false);
     });
     this.view.on('CAR_RESET', async (data) => {
-      const result = await this.model.resetCar(data, false);
-      if (result) {
-        this.view.resetCar(data);
-      }
+      await this.model.resetCar(data, false);
     });
     this.view.on('SWITCH_DRIVE_MODE', async (data) => {
       const result = await this.model.startCarRace(data);
@@ -97,7 +71,7 @@ export class GarageController {
       await Promise.all(arrayWithPromises);
       this.view.showModalWindow('loading');
       arrayWithIdToReset.forEach((el) => {
-        this.view.resetCar(el);
+        this.model.resetCar(el, false);
       });
     });
     this.view.on('CAR_START_ALL', async (data, itemData, carItems) => {
@@ -109,14 +83,8 @@ export class GarageController {
           arrayWithIdToReady.push(element.dataset.id);
         }
       });
-      const result = arrayWithIdToReady.map((item) => this.model.startCarEngine(item));
-      await Promise.all(result).then((value) => {
-        value.forEach((el, index) => {
-          if (el) {
-            this.view.prepareCar(arrayWithIdToReady[index], el, true);
-          }
-        });
-      });
+      const result = arrayWithIdToReady.map((item) => this.model.startCarEngine(item, true));
+      await Promise.all(result);
       const startRacePromiseArray = arrayWithIdToReady.map((item) => this.model.startCarRace(item));
       await Promise.all(startRacePromiseArray).then((value) => {
         this.view.showModalWindow('loading');

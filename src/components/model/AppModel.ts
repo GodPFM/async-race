@@ -14,7 +14,15 @@ import {
 import { CarParam, ItemData, WinnerParams } from '../../utils/types';
 import { carsArray } from '../../utils/objectWithCars';
 
-type AppModelEventsName = 'CHANGE_PAGE' | 'CAR_ADDED' | 'CAR_DELETED' | 'CAR_UPDATED' | 'ENGINE_START_SUCCESS';
+type AppModelEventsName =
+  | 'CHANGE_PAGE'
+  | 'CAR_ADDED'
+  | 'CAR_DELETED'
+  | 'CAR_UPDATED'
+  | 'ENGINE_START_SUCCESS'
+  | 'GET_CARS_FOR_CHANGE_PAGE'
+  | 'CAR_RESETED'
+  | 'CAR_READY';
 export type AppModelInstance = InstanceType<typeof AppModel>;
 
 export class AppModel extends EventEmitter {
@@ -68,12 +76,11 @@ export class AppModel extends EventEmitter {
     });
   }
 
-  async getItems(page: number, limit = 7): Promise<[[ItemData], number] | undefined> {
+  async getItems(page: number, limit = 7) {
     const cars = await getCars(page, limit);
     if (cars) {
-      return [cars[0], page];
+      this.emit('GET_CARS_FOR_CHANGE_PAGE', String(page), cars[0]);
     }
-    return undefined;
   }
 
   async addWinner(id: string, time: number | undefined) {
@@ -108,9 +115,11 @@ export class AppModel extends EventEmitter {
     return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
   }
 
-  async startCarEngine(id: string): Promise<CarParam | null> {
+  async startCarEngine(id: string, isRaceAll: boolean): Promise<CarParam | null> {
     const result = await startEngine(id);
     if (result) {
+      console.log(isRaceAll);
+      this.emit('CAR_READY', id, undefined, result, isRaceAll);
       return result;
     }
     return null;
@@ -125,16 +134,25 @@ export class AppModel extends EventEmitter {
   async resetCar(id: string, isAll: boolean) {
     const result = await stopEngine(id, isAll);
     if (result) {
-      return true;
+      this.emit('CAR_RESETED', id);
     }
     return false;
   }
 
-  emit(eventName: AppModelEventsName, data?: string, itemData?: ItemData, carParams?: CarParam) {
-    return super.emit(eventName, data, itemData);
+  emit(
+    eventName: AppModelEventsName,
+    data?: string,
+    itemData?: ItemData | ItemData[],
+    carParams?: CarParam,
+    isRaceAll?: boolean
+  ) {
+    return super.emit(eventName, data, itemData, carParams, isRaceAll);
   }
 
-  on(eventName: AppModelEventsName, callback: (data: string, itemData: ItemData, carParams: CarParam) => void) {
+  on(
+    eventName: AppModelEventsName,
+    callback: (data: string, itemData: ItemData | ItemData[], carParams: CarParam, isRaceAll: boolean) => void
+  ) {
     return super.on(eventName, callback);
   }
 }
