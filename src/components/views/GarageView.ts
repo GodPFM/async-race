@@ -287,8 +287,9 @@ export class GarageView extends EventEmitter {
       let name = item.querySelector('.main__car-name')?.textContent;
       item.querySelector('.main__car-start')?.classList.add('ready');
       (item.querySelector('.main__car-stop') as HTMLButtonElement).disabled = false;
-      const carSvg = item.querySelector('.main__car-svg') as HTMLElement;
-      if (carSvg) {
+      const carContainer = item.querySelector('.main__car-images') as HTMLElement;
+      const carFireImage = item.querySelector('.main__car-fire') as HTMLElement;
+      if (carContainer) {
         let start: number | null = null;
         const randNumber = Math.floor(Math.random() * (80 - 20) + 20);
         const singleCarAnimation = (time: DOMHighResTimeStamp) => {
@@ -307,8 +308,11 @@ export class GarageView extends EventEmitter {
             }
           } else if (leftNewValue > randNumber) {
             leftNewValue = randNumber;
+            if (carFireImage) {
+              carFireImage.hidden = false;
+            }
           }
-          carSvg.style.left = String(`${leftNewValue}%`);
+          carContainer.style.left = String(`${leftNewValue}%`);
           if ((leftNewValue < 100 && isSuccess) || (leftNewValue < randNumber && !isSuccess)) {
             this.animationCarData[id] = requestAnimationFrame(singleCarAnimation);
           }
@@ -342,7 +346,8 @@ export class GarageView extends EventEmitter {
     const carRequestId = this.animationCarData[id];
     window.cancelAnimationFrame(carRequestId);
     const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
-    const svgCar = item.querySelector('.main__car-svg') as HTMLElement;
+    const carContainer = item.querySelector('.main__car-images') as HTMLElement;
+    const carFireImage = item.querySelector('.main__car-fire') as HTMLElement;
     const startBtn = item.querySelector('.main__car-start') as HTMLButtonElement;
     const stopBtn = item.querySelector('.main__car-stop') as HTMLButtonElement;
     if (startBtn && stopBtn) {
@@ -350,8 +355,11 @@ export class GarageView extends EventEmitter {
       startBtn.className = 'main__car-start';
       stopBtn.disabled = true;
     }
-    if (svgCar) {
-      svgCar.style.left = '0%';
+    if (carContainer) {
+      carContainer.style.left = '0%';
+    }
+    if (carFireImage) {
+      carFireImage.hidden = true;
     }
   }
 

@@ -37,13 +37,20 @@ main {
   margin-right: 10px;
 }
 
-.main__car-svg {
+.main__car-images {
   max-height: 50px;
   position: relative;
   left: 0%;
 }
 
+.main__car-svg {
+  max-height: 50px;
+  width: 100px;
+  position: relative;
+}
+
 .main__car-track {
+  position: relative;
   max-width: 90%;
   display: flex;
   justify-content: space-between;
@@ -56,6 +63,28 @@ main {
 .wrapper {
   max-width: 1200px;
   margin: 0 auto;
+}
+
+.main__car-fire {
+  position: absolute;
+  width: 20px;
+  right: 0;
+  top: 5px;
+  object-fit: contain;
+  transform: scale(1);
+  animation: breathFire 1s infinite;
+}
+
+@keyframes breathFire {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .modal-window {
