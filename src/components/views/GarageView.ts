@@ -76,9 +76,7 @@ export class GarageView extends EventEmitter {
       this.resetCar(data);
     });
     model.on('CAR_READY', (data, itemData, carParams, isRaceAll) => {
-      console.log('emitted', isRaceAll);
       if (isRaceAll !== undefined) {
-        console.log(data, carParams, isRaceAll);
         this.prepareCar(data, carParams, isRaceAll);
       }
     });
@@ -224,7 +222,6 @@ export class GarageView extends EventEmitter {
 
   deleteCarFromPage(id: string): void {
     const item = document.querySelector(`.main__race-car[data-id='${id}']`);
-    console.log(item, id);
     if (item) {
       item.remove();
       const count = document.querySelector('.main__garage-count-number');
@@ -268,7 +265,6 @@ export class GarageView extends EventEmitter {
   }
 
   prepareCar(id: string, carParams: CarParam, isRaceAll: boolean) {
-    console.log('test');
     const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
     if (item) {
       item.dataset.velocity = String(carParams.velocity);

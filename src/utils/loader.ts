@@ -32,12 +32,24 @@ export async function getCars(page?: number, limit?: number): Promise<[[ItemData
   return null;
 }
 
+export async function deleteWinner(id: string) {
+  try {
+    const url = `http://127.0.0.1:3000/winners/${id}`;
+    await fetch(url, {
+      method: 'DELETE',
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function deleteCar(id: string): Promise<boolean> {
   try {
     const url = `http://127.0.0.1:3000/garage/${id}`;
     const result = await fetch(url, {
       method: 'DELETE',
     });
+    await deleteWinner(id);
     return result.status === 200;
   } catch (er) {
     return false;
@@ -168,7 +180,6 @@ export async function createWinner(winnerParams: WinnerParams): Promise<boolean>
       },
       body: JSON.stringify(winnerParams),
     });
-    console.log(response, winnerParams);
     return response.status === 201;
   } catch (e) {
     return false;

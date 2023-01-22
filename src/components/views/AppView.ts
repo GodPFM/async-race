@@ -41,7 +41,6 @@ export class AppView extends EventEmitter {
         element.addEventListener('click', () => {
           switch (element.dataset.to) {
             case 'garage':
-              console.log('click');
               this.emit('GARAGE_CLICK');
               break;
             case 'winners':

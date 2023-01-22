@@ -96,12 +96,10 @@ export class AppModel extends EventEmitter {
         const createWinnerRequest = await createWinner(winnerParams);
       }
       if (checkWinner && typeof checkWinner !== 'boolean') {
-        console.log(checkWinner);
         checkWinner.wins += 1;
         if (checkWinner.time > Number(convertedTime)) {
           checkWinner.time = Number(convertedTime);
         }
-        console.log(checkWinner);
         const updateCarResponse = await updateWinnerInfo(checkWinner);
       }
     }
@@ -118,7 +116,6 @@ export class AppModel extends EventEmitter {
   async startCarEngine(id: string, isRaceAll: boolean): Promise<CarParam | null> {
     const result = await startEngine(id);
     if (result) {
-      console.log(isRaceAll);
       this.emit('CAR_READY', id, undefined, result, isRaceAll);
       return result;
     }
@@ -133,7 +130,6 @@ export class AppModel extends EventEmitter {
 
   async resetCar(id: string, isAll: boolean) {
     const result = await stopEngine(id, isAll);
-    console.log(id);
     if (result) {
       this.emit('CAR_RESETED', id);
       return true;

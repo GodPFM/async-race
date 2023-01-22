@@ -80,6 +80,8 @@ export class GarageController {
           arrayWithIdToReady.push(element.dataset.id);
         }
       });
+      const carsToReset = arrayWithIdToReady.map((item) => this.model.resetCar(item, true));
+      await Promise.all(carsToReset);
       const result = arrayWithIdToReady.map((item) => this.model.startCarEngine(item, true));
       await Promise.all(result);
       const startRacePromiseArray = arrayWithIdToReady.map((item) => this.model.startCarRace(item));
