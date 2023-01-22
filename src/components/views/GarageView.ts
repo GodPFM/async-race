@@ -3,6 +3,7 @@ import type { AppModelInstance } from '../model/AppModel';
 import garage from '../../templates/garage.html';
 import car from '../../templates/car.html';
 import errorServer from '../../templates/errorServer.html';
+import modalWindowTemplate from '../../templates/modalWindow.html';
 import { CarParam, ItemData } from '../../utils/types';
 import { getCars } from '../../utils/loader';
 
@@ -96,14 +97,43 @@ export class GarageView extends EventEmitter {
 
   build(cars?: [ItemData], totalCount?: number) {
     const container = document.querySelector('.main');
+    const garageSection = document.querySelector('.main__change-car') as HTMLElement;
+    const winnersSection = document.querySelector('.winners') as HTMLElement;
     if (container) {
       if (cars && totalCount) {
-        container.innerHTML = garage;
+        const mainWrapper = document.querySelector('.main__wrapper');
+        if (mainWrapper) {
+          if (garageSection) {
+            garageSection.hidden = false;
+          } else {
+            const fragment = document.createElement('template');
+            const garageTemplate = document.createElement('template');
+            garageTemplate.innerHTML = garage;
+            const modalWindow = document.createElement('div');
+            modalWindow.className = 'modal-window hidden';
+            modalWindow.innerHTML = modalWindowTemplate;
+            fragment.content.append(modalWindow);
+            fragment.content.append(garageTemplate.content);
+            mainWrapper.append(fragment.content);
+          }
+          if (winnersSection) {
+            winnersSection.hidden = true;
+          }
+        } else {
+          const mainWrapperTemplate = document.createElement('div');
+          const modalWindow = document.createElement('div');
+          mainWrapperTemplate.className = 'main__wrapper wrapper';
+          mainWrapperTemplate.innerHTML = garage;
+          modalWindow.className = 'modal-window hidden';
+          modalWindow.innerHTML = modalWindowTemplate;
+          mainWrapperTemplate.append(modalWindow);
+          container.append(mainWrapperTemplate);
+        }
       } else {
         container.innerHTML = errorServer;
       }
     }
-    if (cars && totalCount) {
+    if (cars && totalCount && !garageSection) {
       this.buildCars(cars);
       const count = document.querySelector('.main__garage-count-number');
       if (count) {

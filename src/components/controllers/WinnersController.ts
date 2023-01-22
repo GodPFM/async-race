@@ -13,9 +13,6 @@ export class WinnersController {
     this.model = model;
     this.view = view;
     this.router = router;
-    model.on('CHANGE_PAGE', (page: string) => {
-      if (page === '/winners') this.view.build();
-    });
   }
 }
 
