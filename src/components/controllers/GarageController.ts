@@ -27,8 +27,10 @@ export class GarageController {
     this.view.on('UPDATE_CAR', (data, itemData) => {
       this.model.updateCar(itemData);
     });
-    this.view.on('GENERATE_CARS', () => {
-      this.model.generateOneHundredCars();
+    this.view.on('GENERATE_CARS', async () => {
+      this.view.showModalWindow('loading');
+      await this.model.generateOneHundredCars();
+      this.view.showModalWindow('loading');
     });
     this.view.on('CHANGE_GARAGE_PAGE', async (data) => {
       if (Number(data) !== 0) {

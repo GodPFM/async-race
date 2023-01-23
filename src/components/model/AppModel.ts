@@ -79,9 +79,12 @@ export class AppModel extends EventEmitter {
         color,
       });
     }
-    arrayWithCars.forEach((el) => {
-      this.addCar(el.name, el.color);
-    });
+    await Promise.all(
+      arrayWithCars.map(async (el) => {
+        await this.addCar(el.name, el.color);
+      })
+    );
+    return true;
   }
 
   async getItems(page: number, limit = 7) {
