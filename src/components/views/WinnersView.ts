@@ -14,13 +14,16 @@ export class WinnersView extends EventEmitter {
 
   private lastSort: string;
 
+  private page: number;
+
   constructor(model: AppModelInstance) {
     super();
     this.model = model;
+    this.page = 1;
     this.lastSort = '';
     model.on('CHANGE_PAGE', async (page: string) => {
       if (page === '/winners') {
-        const result = await this.model.getWinners('1');
+        const result = await this.model.getWinners(String(this.page));
         if (result) {
           this.build(result[1]);
           this.buildRows(result[0]);
@@ -129,6 +132,7 @@ export class WinnersView extends EventEmitter {
         const page = Number(pageField.textContent) - 1;
         if (page !== 0) {
           pageField.textContent = String(page);
+          this.page = page;
           this.emit('CHANGE_WINNERS_TABLE', page, this.lastSort, true);
         }
       }
@@ -144,6 +148,7 @@ export class WinnersView extends EventEmitter {
         }
         if (items === 10 && Math.ceil(totalCountNumber / 10) >= page) {
           pageField.textContent = String(page);
+          this.page = page;
           this.emit('CHANGE_WINNERS_TABLE', page, this.lastSort, true);
         }
       }
