@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/prefer-default-export
 import { CarParam, ItemData, WinnerParams } from './types';
 
 let controller = new AbortController();

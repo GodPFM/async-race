@@ -3,24 +3,34 @@ import type { AppModelInstance } from '../model/AppModel';
 import winnerTemplate from '../../templates/winners.html';
 import rowTemplate from '../../templates/winnersTableRowTemplate.html';
 import { CarParam, ItemData, WinnerParams } from '../../utils/types';
+import modalWindowTemplate from '../../templates/modalWindow.html';
 
-type WinnersViewEventsName = '';
+type WinnersViewEventsName = 'CHANGE_WINNERS_TABLE' | 'CHANGE_WINNERS_PAGE';
 
 export type WinnersViewInstance = InstanceType<typeof WinnersView>;
 
 export class WinnersView extends EventEmitter {
   private model: AppModelInstance;
 
+  private lastSort: string;
+
   constructor(model: AppModelInstance) {
     super();
     this.model = model;
+    this.lastSort = '';
     model.on('CHANGE_PAGE', async (page: string) => {
       if (page === '/winners') {
-        const result = await this.model.getWinners('1', undefined, undefined);
+        const result = await this.model.getWinners('1');
         if (result) {
           this.build(result[1]);
           this.buildRows(result[0]);
         }
+      }
+    });
+    model.on('WINNERS_READY', (data, itemData, carParams, isRaceAll, winnersData) => {
+      if (winnersData.length) {
+        this.removeTableRows();
+        this.buildRows(winnersData);
       }
     });
   }
@@ -44,6 +54,10 @@ export class WinnersView extends EventEmitter {
         if (!mainWrapper) {
           const mainWrapperTemplate = document.createElement('div');
           mainWrapperTemplate.className = 'main__wrapper wrapper';
+          const modalWindow = document.createElement('div');
+          modalWindow.className = 'modal-window hidden';
+          modalWindow.innerHTML = modalWindowTemplate;
+          mainWrapperTemplate.append(modalWindow);
           mainContainer.append(mainWrapperTemplate);
           mainWrapper = mainContainer.querySelector('.main__wrapper');
         }
@@ -53,6 +67,7 @@ export class WinnersView extends EventEmitter {
         if (mainWrapper) {
           mainWrapper.append(winnerSection);
         }
+        this.addClickListener();
       }
     }
     const count = document.querySelector('.winners__count');
@@ -87,11 +102,56 @@ export class WinnersView extends EventEmitter {
     }
   }
 
-  emit(eventName: WinnersViewEventsName) {
-    return super.emit(eventName);
+  addClickListener() {
+    const tableHead = document.querySelector('.winners__table-head');
+    const pageField = document.querySelector('.winners__page-number');
+    tableHead?.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      console.log(target);
+      if (pageField) {
+        const page = Number(pageField.textContent);
+        if (target.closest('.winners__table-best-time')) {
+          this.lastSort = 'time';
+          this.emit('CHANGE_WINNERS_TABLE', Number(page), 'time', false);
+        }
+        if (target.closest('.winners__table-wins')) {
+          this.lastSort = 'wins';
+          this.emit('CHANGE_WINNERS_TABLE', Number(page), 'wins', false);
+        }
+      }
+    });
+    document.querySelector('.winners__button--prev')?.addEventListener('click', () => {
+      if (pageField) {
+        const page = Number(pageField.textContent) - 1;
+        if (page !== 0) {
+          pageField.textContent = String(page);
+          this.emit('CHANGE_WINNERS_TABLE', page, this.lastSort, true);
+        }
+      }
+    });
+    document.querySelector('.winners__button--next')?.addEventListener('click', () => {
+      if (pageField) {
+        const page = Number(pageField.textContent) + 1;
+        const items = document.querySelectorAll('.winners__row').length;
+        if (items === 10) {
+          pageField.textContent = String(page);
+          this.emit('CHANGE_WINNERS_TABLE', page, this.lastSort, true);
+        }
+      }
+    });
   }
 
-  on(eventName: WinnersViewEventsName, callback: (data: string) => void) {
+  removeTableRows() {
+    document.querySelectorAll('.winners__row')?.forEach((el) => {
+      el.remove();
+    });
+  }
+
+  emit(eventName: WinnersViewEventsName, page: number, data: string, isPagination: boolean) {
+    return super.emit(eventName, page, data, isPagination);
+  }
+
+  on(eventName: WinnersViewEventsName, callback: (page: number, data: string, isPagination: boolean) => void) {
     return super.on(eventName, callback);
   }
 }

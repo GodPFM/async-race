@@ -23,15 +23,22 @@ type AppModelEventsName =
   | 'ENGINE_START_SUCCESS'
   | 'GET_CARS_FOR_CHANGE_PAGE'
   | 'CAR_RESETED'
-  | 'CAR_READY';
+  | 'CAR_READY'
+  | 'WINNERS_READY';
 export type AppModelInstance = InstanceType<typeof AppModel>;
 
 export class AppModel extends EventEmitter {
   public isWinnerInRace: boolean;
 
+  public sortBy: string;
+
+  public order: string;
+
   constructor() {
     super();
     this.isWinnerInRace = false;
+    this.sortBy = '';
+    this.order = '';
   }
 
   changePage(page: string) {
@@ -138,8 +145,27 @@ export class AppModel extends EventEmitter {
     return false;
   }
 
-  async getWinners(page: string, sort?: string, order?: string) {
-    return getWinners(sort, order, page);
+  async getWinners(page: string) {
+    return getWinners(this.sortBy, this.order, page);
+  }
+
+  async changeWinnersTable(page: number, tableCell: string, isPagination: boolean) {
+    if (!isPagination) {
+      if (this.sortBy === tableCell) {
+        if (this.order === 'DESC') {
+          this.order = 'ASC';
+        } else {
+          this.order = 'DESC';
+        }
+      } else {
+        this.sortBy = tableCell;
+        this.order = 'ASC';
+      }
+    }
+    const result = await getWinners(this.sortBy, this.order, String(page));
+    if (result) {
+      this.emit('WINNERS_READY', undefined, undefined, undefined, undefined, result[0]);
+    }
   }
 
   emit(
@@ -147,14 +173,21 @@ export class AppModel extends EventEmitter {
     data?: string,
     itemData?: ItemData | ItemData[],
     carParams?: CarParam,
-    isRaceAll?: boolean
+    isRaceAll?: boolean,
+    winnersData?: Awaited<WinnerParams & ItemData>[]
   ) {
-    return super.emit(eventName, data, itemData, carParams, isRaceAll);
+    return super.emit(eventName, data, itemData, carParams, isRaceAll, winnersData);
   }
 
   on(
     eventName: AppModelEventsName,
-    callback: (data: string, itemData: ItemData | ItemData[], carParams: CarParam, isRaceAll: boolean) => void
+    callback: (
+      data: string,
+      itemData: ItemData | ItemData[],
+      carParams: CarParam,
+      isRaceAll: boolean,
+      winnersData: Awaited<WinnerParams & ItemData>[]
+    ) => void
   ) {
     return super.on(eventName, callback);
   }

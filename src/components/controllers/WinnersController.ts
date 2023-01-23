@@ -13,6 +13,9 @@ export class WinnersController {
     this.model = model;
     this.view = view;
     this.router = router;
+    this.view.on('CHANGE_WINNERS_TABLE', (page, data, isPagination) => {
+      this.model.changeWinnersTable(page, data, isPagination);
+    });
   }
 }
 

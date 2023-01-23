@@ -122,3 +122,28 @@ main {
 .footer__information {
   display: flex;
 }
+
+.winners__table {
+  text-align: center;
+}
+
+.winners__table td {
+  min-width: 100px;
+}
+
+.winners__table-wins,
+.winners__table-best-time {
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.winners__table-wins div,
+.winners__table-best-time div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.winners__arrow {
+  max-height: 15px;
+}
