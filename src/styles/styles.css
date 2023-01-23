@@ -1,13 +1,31 @@
 * {
   box-sizing: border-box;
+  font-family: sans-serif;
+  color: #f0f1f2;
+}
+
+button {
+  cursor: pointer;
+  background-color: #80858b;
+  border-radius: 5px;
+  border: none;
+}
+
+button:hover {
+  background-color: #9fa5ad;
+}
+
+button:disabled {
+  cursor: inherit;
+  background-color: #53575c;
 }
 
 body {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
+  background-color: #39434d;
   margin: 0;
-  background-image: url("");
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -18,14 +36,37 @@ main {
 
 .header {
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .main__pagination {
   margin-bottom: 10px;
 }
 
+.main__create-car-name,
+.main__update-car-name {
+  color: black;
+}
+
+.main__create-car,
+.main__update-car {
+  margin-bottom: 5px;
+}
+
+.main__create-car-submit,
+.main__update-car-submit {
+  width: 55px;
+  height: 21px;
+}
+
+.main__update-car-color,
+.main__create-car-color {
+  max-height: 21px;
+}
+
 .main__race-car {
   border-bottom: dashed black 2px;
+  margin-bottom: 5px;
 }
 
 .main__car-settings {
@@ -36,23 +77,60 @@ main {
   margin: 0;
 }
 
-.main__car-start.ready {
-  background: red;
+.main__car-start,
+.main__car-stop {
+  padding: 0;
+  max-width: 25px;
+  max-height: 25px;
+}
+
+.main__car-start {
+  background-color: rgba(17,177,0,1);
+  border-radius: 5px;
+  border: none;
+}
+
+.main__car-start:hover {
+  background-color: rgba(17,177,0,0.75);
+}
+
+.main__car-start:disabled {
+  background-color: rgba(17,177,0,0.5)
+}
+
+.main__car-stop {
+  background-color: #ff0444;
+  border-radius: 5px;
+  border: none;
+}
+
+.main__car-stop:hover {
+  background-color: #a5012b;
+}
+
+.main__car-stop:disabled {
+  background-color: #ff04445e;
+}
+
+.main__car-start-svg,
+.main__car-stop-svg {
+  max-width: 100%;
 }
 
 .main__car-settings-btn {
   margin-right: 10px;
+  margin-bottom: 5px;
 }
 
 .main__car-images {
-  max-height: 50px;
+  max-height: 40px;
   position: relative;
   left: 0%;
-  top: 10px;
+  top: 7px;
 }
 
 .main__car-svg {
-  max-height: 50px;
+  max-height: 40px;
   width: 100px;
   position: relative;
 }
@@ -65,7 +143,7 @@ main {
 }
 
 .main__car-finish-flag {
-  max-height: 50px;
+  max-height: 40px;
 }
 
 .wrapper {
@@ -76,8 +154,8 @@ main {
 .main__car-fire {
   position: absolute;
   width: 20px;
-  right: 0;
-  top: 5px;
+  right: 10px;
+  top: 1px;
   object-fit: contain;
   transform: scale(1);
   animation: breathFire 1s infinite;
