@@ -243,18 +243,26 @@ export class GarageView extends EventEmitter {
         }
       }
       if ((target as HTMLElement).closest('.main__car-start')) {
-        const button = target as HTMLButtonElement;
-        button.disabled = true;
-        this.emit('START_ENGINE', id);
+        const button = el.querySelector('.main__car-start') as HTMLButtonElement;
+        if (button) {
+          if (!button.disabled) {
+            this.emit('START_ENGINE', id);
+          }
+          button.disabled = true;
+        }
       }
       if ((target as HTMLElement).closest('.main__car-stop')) {
-        const button = target as HTMLButtonElement;
-        button.disabled = true;
-        if (id) {
-          const idToAdd = Number(id);
-          this.idToReset[idToAdd] = id;
+        const button = el.querySelector('.main__car-stop') as HTMLButtonElement;
+        if (button) {
+          if (!button.disabled) {
+            if (id) {
+              const idToAdd = Number(id);
+              this.idToReset[idToAdd] = id;
+            }
+            this.emit('CAR_RESET', id);
+          }
+          button.disabled = true;
         }
-        this.emit('CAR_RESET', id);
       }
     });
   }
