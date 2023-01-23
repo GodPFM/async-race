@@ -239,12 +239,12 @@ export class GarageView extends EventEmitter {
           }
         }
       }
-      if ((target as HTMLElement).classList.contains('main__car-start')) {
+      if ((target as HTMLElement).closest('.main__car-start')) {
         const button = target as HTMLButtonElement;
         button.disabled = true;
         this.emit('START_ENGINE', id);
       }
-      if ((target as HTMLElement).classList.contains('main__car-stop')) {
+      if ((target as HTMLElement).closest('.main__car-stop')) {
         const button = target as HTMLButtonElement;
         button.disabled = true;
         this.emit('CAR_RESET', id);
@@ -360,9 +360,8 @@ export class GarageView extends EventEmitter {
         const singleCarAnimation = (time: DOMHighResTimeStamp) => {
           if (!start) start = time;
           const progress = time - start;
-          let leftNewValue = (progress * velocity) / (distance / 100);
-          if (leftNewValue > 100) {
-            leftNewValue = 100;
+          const leftNewValue = (progress * velocity) / (distance / 100);
+          if (leftNewValue >= 90) {
             if (isRace && !this.isRaceReset) {
               if (!name) {
                 name = '';
@@ -385,16 +384,18 @@ export class GarageView extends EventEmitter {
     const carRequestId = this.animationCarData[id];
     window.cancelAnimationFrame(carRequestId);
     const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
-    const carFireImage = item.querySelector('.main__car-fire') as HTMLElement;
-    const carIcon = item.querySelector('.main__car-images') as HTMLElement;
-    const trackElement = document.querySelector('.main__car-track');
-    if (carFireImage && carIcon && trackElement) {
-      const carIconStyles = getComputedStyle(carIcon);
-      const carIconLeft = carIconStyles.getPropertyValue('left');
-      const trackWidth = getComputedStyle(trackElement).width;
-      const leftInPercent = (parseInt(carIconLeft, 10) / parseInt(trackWidth, 10)) * 100;
-      if (carFireImage && leftInPercent < 100) {
-        carFireImage.hidden = false;
+    if (item) {
+      const carFireImage = item.querySelector('.main__car-fire') as HTMLElement;
+      const carIcon = item.querySelector('.main__car-images') as HTMLElement;
+      const trackElement = document.querySelector('.main__car-track');
+      if (carFireImage && carIcon && trackElement) {
+        const carIconStyles = getComputedStyle(carIcon);
+        const carIconLeft = carIconStyles.getPropertyValue('left');
+        const trackWidth = getComputedStyle(trackElement).width;
+        const leftInPercent = (parseInt(carIconLeft, 10) / parseInt(trackWidth, 10)) * 100;
+        if (carFireImage && leftInPercent < 100) {
+          carFireImage.hidden = false;
+        }
       }
     }
   }
