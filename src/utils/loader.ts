@@ -4,6 +4,21 @@ import { CarParam, ItemData, WinnerParams } from './types';
 let controller = new AbortController();
 export const { signal } = controller;
 
+export async function getCar(id: number): Promise<ItemData | null> {
+  try {
+    const url = `http://127.0.0.1:3000/garage/${id}`;
+    const request = await fetch(url, {
+      method: 'GET',
+    });
+    if (request.status === 200) {
+      return await request.json();
+    }
+    return null;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
 export async function getCars(page?: number, limit?: number): Promise<[[ItemData], number] | null> {
   try {
     let url = 'http://127.0.0.1:3000/garage';
@@ -198,6 +213,39 @@ export async function updateWinnerInfo(winnerParams: WinnerParams): Promise<bool
     });
     return response.status === 200;
   } catch (e) {
+    return null;
+  }
+}
+
+export async function getWinners(
+  sort?: string,
+  order?: string,
+  page = '1',
+  limit = 10
+): Promise<[Awaited<WinnerParams & ItemData>[], number] | null> {
+  try {
+    let url = `http://127.0.0.1:3000/winners/?_limit=${limit}&_page=${page}`;
+    if (sort) {
+      url += `&_sort=${sort}`;
+    }
+    if (order) {
+      url += `&_order=${order}`;
+    }
+    const response = await fetch(url, {
+      method: 'GET',
+    });
+    const totalCount = await response.headers.get('X-Total-Count');
+    const array: Array<WinnerParams> = await response.json();
+    const arrayWithId = array.map((item) => item.id);
+    const result = await Promise.all(
+      arrayWithId.map(async (id, index) => {
+        const carData: ItemData | null = await getCar(id);
+        return Object.assign(array[index], carData);
+      })
+    );
+    return [result, Number(totalCount)];
+  } catch (e) {
+    console.log(e);
     return null;
   }
 }

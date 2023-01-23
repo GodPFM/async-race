@@ -6,6 +6,7 @@ import {
   deleteCar,
   getCars,
   getWinner,
+  getWinners,
   startEngine,
   stopEngine,
   updateCar,
@@ -135,6 +136,10 @@ export class AppModel extends EventEmitter {
       return true;
     }
     return false;
+  }
+
+  async getWinners(page: string, sort?: string, order?: string) {
+    return getWinners(sort, order, page);
   }
 
   emit(
