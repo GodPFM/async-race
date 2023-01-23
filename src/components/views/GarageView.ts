@@ -164,6 +164,7 @@ export class GarageView extends EventEmitter {
       document.querySelector('.main__race-reset')?.addEventListener('click', () => {
         const carItems = document.querySelectorAll('.main__race-car');
         if (carItems) {
+          this.switchStateButtons(false);
           this.emit('CAR_RESET_ALL', undefined, undefined, carItems);
         }
       });
