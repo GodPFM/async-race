@@ -199,8 +199,11 @@ export class GarageView extends EventEmitter {
         const newName = (document.querySelector('.main__update-car-name') as HTMLInputElement).value;
         const newColor = (document.querySelector('.main__update-car-color') as HTMLInputElement).value;
         const id = Number(updateButton.dataset.id);
-        if (newName && newColor && id) {
+        const item = document.querySelector(`.main__race-car[data-id="${id}"]`);
+        if (newName && newColor && id && item) {
           this.emit('UPDATE_CAR', undefined, { name: newName, color: newColor, id });
+        } else {
+          this.resetInputfields('update');
         }
       });
     }
