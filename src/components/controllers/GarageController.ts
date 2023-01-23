@@ -87,5 +87,3 @@ export class GarageController {
     });
   }
 }
-
-export default GarageController;

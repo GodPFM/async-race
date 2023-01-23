@@ -18,5 +18,3 @@ export class WinnersController {
     });
   }
 }
-
-export default WinnersController;

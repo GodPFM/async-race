@@ -25,5 +25,3 @@ export class AppController {
     router.init();
   }
 }
-
-export default AppController;

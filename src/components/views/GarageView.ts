@@ -482,5 +482,3 @@ export class GarageView extends EventEmitter {
     return super.on(eventName, callback);
   }
 }
-
-export default GarageView;

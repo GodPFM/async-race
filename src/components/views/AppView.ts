@@ -62,5 +62,3 @@ export class AppView extends EventEmitter {
     return super.on(eventName, callback);
   }
 }
-
-export default AppView;
