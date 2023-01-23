@@ -27,4 +27,12 @@ export const carsArray: { auto: string; model: Array<string> }[] = [
     auto: 'Lexus',
     model: ['RX', 'NX', 'ES', 'UX', 'LS', 'LX', 'GX', 'LC'],
   },
+  {
+    auto: 'Opel',
+    model: ['Grandland', 'Astra', 'Mokka', 'Corsa', 'Insignia', 'Zafira', 'Astra Sport', 'Ampera', 'Cascada', 'Adam'],
+  },
+  {
+    auto: 'Chevrolet',
+    model: ['Camaro', 'Corvette', 'Malibu', 'Monza', 'Cruze'],
+  },
 ];
