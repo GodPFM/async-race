@@ -7,10 +7,17 @@ body {
   min-height: 100vh;
   flex-direction: column;
   margin: 0;
+  background-image: url("");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 main {
   flex-grow: 1;
+}
+
+.header {
+  margin-top: 10px;
 }
 
 .main__pagination {

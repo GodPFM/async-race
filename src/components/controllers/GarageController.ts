@@ -62,7 +62,7 @@ export class GarageController {
       });
       this.view.showModalWindow('loading');
       const arrayWithPromises = arrayWithIdToReset.map((item) => this.model.resetCar(item, true));
-      await Promise.all(arrayWithPromises);
+      await Promise.allSettled(arrayWithPromises);
       this.view.showModalWindow('loading');
     });
     this.view.on('CAR_START_ALL', async (data, itemData, carItems) => {
@@ -75,11 +75,11 @@ export class GarageController {
         }
       });
       const carsToReset = arrayWithIdToReady.map((item) => this.model.resetCar(item, true));
-      await Promise.all(carsToReset);
+      await Promise.allSettled(carsToReset);
       const result = arrayWithIdToReady.map((item) => this.model.startCarEngine(item, true));
-      await Promise.all(result);
+      await Promise.allSettled(result);
       const startRacePromiseArray = arrayWithIdToReady.map((item) => this.model.startCarRace(item));
-      await Promise.all(startRacePromiseArray).then((value) => {
+      await Promise.allSettled(startRacePromiseArray).then((value) => {
         this.view.showModalWindow('loading');
         value.forEach((el, index) => {
           if (el) {

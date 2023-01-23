@@ -79,7 +79,7 @@ export class AppModel extends EventEmitter {
         color,
       });
     }
-    await Promise.all(
+    await Promise.allSettled(
       arrayWithCars.map(async (el) => {
         await this.addCar(el.name, el.color);
       })
