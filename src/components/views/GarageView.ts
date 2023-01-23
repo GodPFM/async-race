@@ -170,6 +170,7 @@ export class GarageView extends EventEmitter {
       document.querySelector('.main__race-start')?.addEventListener('click', () => {
         const carItems = document.querySelectorAll('.main__race-car');
         if (carItems) {
+          this.switchStateButtons(true);
           this.emit('CAR_START_ALL', undefined, undefined, carItems);
         }
       });
@@ -352,6 +353,7 @@ export class GarageView extends EventEmitter {
                 if (!name) {
                   name = '';
                 }
+                this.switchStateButtons(false);
                 this.emit('WINNER_FOUND', id, { name, color: '', id: Number(id), time: progress });
               }
             }
@@ -388,6 +390,37 @@ export class GarageView extends EventEmitter {
         modalWindow.classList.remove('hidden');
         setTimeout(() => modalWindow.classList.add('hidden'), 3000);
       }
+    }
+  }
+
+  switchStateButtons(isDisable: boolean) {
+    const createButton = document.querySelector('.main__create-car-submit') as HTMLButtonElement;
+    const updateButton = document.querySelector('.main__update-car-submit') as HTMLButtonElement;
+    const toWinnersButton = document.querySelector('.header__garage-winners') as HTMLButtonElement;
+    const prevButton = document.querySelector('.main__pagination-btn--prev') as HTMLButtonElement;
+    const nextButton = document.querySelector('.main__pagination-btn--next') as HTMLButtonElement;
+    const raceButton = document.querySelector('.main__race-start') as HTMLButtonElement;
+    const generateCarsButton = document.querySelector('.main__race-generate') as HTMLButtonElement;
+    document.querySelectorAll('.main__car-remove-btn')?.forEach((el) => {
+      const element = el as HTMLButtonElement;
+      element.disabled = isDisable;
+    });
+    if (
+      createButton &&
+      updateButton &&
+      toWinnersButton &&
+      prevButton &&
+      nextButton &&
+      raceButton &&
+      generateCarsButton
+    ) {
+      createButton.disabled = isDisable;
+      updateButton.disabled = isDisable;
+      toWinnersButton.disabled = isDisable;
+      prevButton.disabled = isDisable;
+      nextButton.disabled = isDisable;
+      raceButton.disabled = isDisable;
+      generateCarsButton.disabled = isDisable;
     }
   }
 
