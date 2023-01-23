@@ -42,11 +42,14 @@ export class GarageView extends EventEmitter {
 
   private isRaceReset: boolean;
 
+  private idToReset: { [key: number]: string };
+
   constructor(model: AppModelInstance) {
     super();
     this.model = model;
     this.animationCarData = {} as AnimationCarData;
     this.isRaceReset = false;
+    this.idToReset = { 0: '0' };
     model.on('CHANGE_PAGE', async (page) => {
       if (page === '/') {
         const cars = await getCars(1, 7);
@@ -247,6 +250,10 @@ export class GarageView extends EventEmitter {
       if ((target as HTMLElement).closest('.main__car-stop')) {
         const button = target as HTMLButtonElement;
         button.disabled = true;
+        if (id) {
+          const idToAdd = Number(id);
+          this.idToReset[idToAdd] = id;
+        }
         this.emit('CAR_RESET', id);
       }
     });
@@ -347,6 +354,7 @@ export class GarageView extends EventEmitter {
   }
 
   carDrive(id: string, isSuccess: boolean, isRace: boolean) {
+    console.log(this.idToReset);
     const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
     if (item) {
       const velocity = Number(item.dataset.velocity);
@@ -362,7 +370,7 @@ export class GarageView extends EventEmitter {
           const progress = time - start;
           const leftNewValue = (progress * velocity) / (distance / 100);
           if (leftNewValue >= 90) {
-            if (isRace && !this.isRaceReset) {
+            if (isRace && !this.isRaceReset && !this.idToReset[Number(id)]) {
               if (!name) {
                 name = '';
               }
@@ -454,6 +462,7 @@ export class GarageView extends EventEmitter {
   resetCar(id: string) {
     const carRequestId = this.animationCarData[id];
     window.cancelAnimationFrame(carRequestId);
+    delete this.idToReset[Number(id)];
     const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
     const carContainer = item.querySelector('.main__car-images') as HTMLElement;
     const carFireImage = item.querySelector('.main__car-fire') as HTMLElement;
