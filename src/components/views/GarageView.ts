@@ -40,10 +40,13 @@ export class GarageView extends EventEmitter {
 
   private animationCarData: AnimationCarData;
 
+  private isRaceReset: boolean;
+
   constructor(model: AppModelInstance) {
     super();
     this.model = model;
     this.animationCarData = {} as AnimationCarData;
+    this.isRaceReset = false;
     model.on('CHANGE_PAGE', async (page) => {
       if (page === '/') {
         const cars = await getCars(1, 7);
@@ -165,6 +168,7 @@ export class GarageView extends EventEmitter {
         const carItems = document.querySelectorAll('.main__race-car');
         if (carItems) {
           this.switchStateButtons(false);
+          this.isRaceReset = true;
           this.emit('CAR_RESET_ALL', undefined, undefined, carItems);
         }
       });
@@ -172,6 +176,7 @@ export class GarageView extends EventEmitter {
         const carItems = document.querySelectorAll('.main__race-car');
         if (carItems) {
           this.switchStateButtons(true);
+          this.isRaceReset = false;
           this.emit('CAR_START_ALL', undefined, undefined, carItems);
         }
       });
@@ -350,7 +355,7 @@ export class GarageView extends EventEmitter {
           if (isSuccess) {
             if (leftNewValue > 100) {
               leftNewValue = 100;
-              if (isRace) {
+              if (isRace && !this.isRaceReset) {
                 if (!name) {
                   name = '';
                 }
