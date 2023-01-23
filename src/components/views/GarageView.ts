@@ -166,7 +166,15 @@ export class GarageView extends EventEmitter {
       });
       document.querySelector('.main__pagination-btn--prev')?.addEventListener('click', () => {
         const number = document.querySelector('.main__page-number')?.textContent;
-        if (number) this.emit('CHANGE_GARAGE_PAGE', String(Number(number) - 1));
+        if (number) {
+          if (!this.isRaceReset) {
+            const resetBtn = document.querySelector('.main__race-reset') as HTMLButtonElement;
+            if (resetBtn) {
+              resetBtn.click();
+            }
+          }
+          this.emit('CHANGE_GARAGE_PAGE', String(Number(number) - 1));
+        }
       });
       document.querySelector('.main__pagination-btn--next')?.addEventListener('click', () => {
         const number = document.querySelector('.main__page-number')?.textContent;
@@ -174,6 +182,12 @@ export class GarageView extends EventEmitter {
         if (totalCountField) {
           const totalNumber = Number(totalCountField.textContent);
           if (Math.ceil(totalNumber / 7) >= Number(number) + 1) {
+            if (!this.isRaceReset) {
+              const resetBtn = document.querySelector('.main__race-reset') as HTMLButtonElement;
+              if (resetBtn) {
+                resetBtn.click();
+              }
+            }
             this.emit('CHANGE_GARAGE_PAGE', String(Number(number) + 1));
           }
         }
@@ -481,20 +495,22 @@ export class GarageView extends EventEmitter {
     window.cancelAnimationFrame(carRequestId);
     delete this.idToReset[Number(id)];
     const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
-    const carContainer = item.querySelector('.main__car-images') as HTMLElement;
-    const carFireImage = item.querySelector('.main__car-fire') as HTMLElement;
-    const startBtn = item.querySelector('.main__car-start') as HTMLButtonElement;
-    const stopBtn = item.querySelector('.main__car-stop') as HTMLButtonElement;
-    if (startBtn && stopBtn) {
-      startBtn.disabled = false;
-      startBtn.className = 'main__car-start';
-      stopBtn.disabled = true;
-    }
-    if (carContainer) {
-      carContainer.style.left = '0%';
-    }
-    if (carFireImage) {
-      carFireImage.hidden = true;
+    if (item) {
+      const carContainer = item.querySelector('.main__car-images') as HTMLElement;
+      const carFireImage = item.querySelector('.main__car-fire') as HTMLElement;
+      const startBtn = item.querySelector('.main__car-start') as HTMLButtonElement;
+      const stopBtn = item.querySelector('.main__car-stop') as HTMLButtonElement;
+      if (startBtn && stopBtn) {
+        startBtn.disabled = false;
+        startBtn.className = 'main__car-start';
+        stopBtn.disabled = true;
+      }
+      if (carContainer) {
+        carContainer.style.left = '0%';
+      }
+      if (carFireImage) {
+        carFireImage.hidden = true;
+      }
     }
   }
 
