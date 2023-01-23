@@ -134,7 +134,7 @@ main {
 .winners__table-wins,
 .winners__table-best-time {
   cursor: pointer;
-  min-width: 120px;
+  min-width: 150px;
 }
 
 .winners__table-wins div,
@@ -147,3 +147,8 @@ main {
 .winners__arrow {
   max-height: 15px;
 }
+
+.winners__arrow.rotate {
+  transform: rotate(180deg);
+}
+

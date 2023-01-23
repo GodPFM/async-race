@@ -112,10 +112,14 @@ export class WinnersView extends EventEmitter {
         const page = Number(pageField.textContent);
         if (target.closest('.winners__table-best-time')) {
           this.lastSort = 'time';
+          this.switchArrow('time');
+          this.hideArrow('win');
           this.emit('CHANGE_WINNERS_TABLE', Number(page), 'time', false);
         }
         if (target.closest('.winners__table-wins')) {
           this.lastSort = 'wins';
+          this.switchArrow('win');
+          this.hideArrow('time');
           this.emit('CHANGE_WINNERS_TABLE', Number(page), 'wins', false);
         }
       }
@@ -144,6 +148,31 @@ export class WinnersView extends EventEmitter {
         }
       }
     });
+  }
+
+  switchArrow(tableCellName: string) {
+    const arrow = document.querySelector(`.winners__${tableCellName}-arrow`) as HTMLElement;
+    if (arrow) {
+      if (arrow.classList.contains('hidden')) {
+        arrow.classList.remove('hidden');
+      } else if (arrow.classList.contains('rotate')) {
+        arrow.classList.remove('rotate');
+      } else {
+        arrow.classList.add('rotate');
+      }
+    }
+  }
+
+  hideArrow(tableCellName: string) {
+    const arrow = document.querySelector(`.winners__${tableCellName}-arrow`);
+    if (arrow) {
+      if (!arrow.classList.contains('hidden')) {
+        arrow.classList.add('hidden');
+      }
+      if (!arrow.classList.contains('rotate')) {
+        arrow.classList.add('rotate');
+      }
+    }
   }
 
   removeTableRows() {
