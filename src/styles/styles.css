@@ -41,6 +41,7 @@ main {
   max-height: 50px;
   position: relative;
   left: 0%;
+  top: 10px;
 }
 
 .main__car-svg {

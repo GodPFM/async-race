@@ -152,7 +152,14 @@ export class GarageView extends EventEmitter {
       });
       document.querySelector('.main__pagination-btn--next')?.addEventListener('click', () => {
         const number = document.querySelector('.main__page-number')?.textContent;
-        if (number) this.emit('CHANGE_GARAGE_PAGE', String(Number(number) + 1));
+        const totalCountField = document.querySelector('.main__garage-count-number');
+        if (totalCountField) {
+          const totalNumber = Number(totalCountField.textContent);
+          console.log(Math.ceil(totalNumber / 7), Number(number) + 1);
+          if (Math.ceil(totalNumber / 7) >= Number(number) + 1) {
+            this.emit('CHANGE_GARAGE_PAGE', String(Number(number) + 1));
+          }
+        }
       });
       document.querySelector('.main__race-reset')?.addEventListener('click', () => {
         const carItems = document.querySelectorAll('.main__race-car');
