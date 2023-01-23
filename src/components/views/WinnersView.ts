@@ -42,6 +42,10 @@ export class WinnersView extends EventEmitter {
     const mainContainer = document.querySelector('.main') as HTMLElement;
     const winnerPage = document.querySelector('.winners') as HTMLElement;
     if (mainContainer) {
+      const errorElement = mainContainer.querySelector('.main__error-server');
+      if (errorElement) {
+        errorElement.remove();
+      }
       const racePage = document.querySelector('.main__change-car') as HTMLElement;
       if (racePage) {
         racePage.hidden = true;

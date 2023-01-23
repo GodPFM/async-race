@@ -114,6 +114,10 @@ export class GarageView extends EventEmitter {
     const garageSection = document.querySelector('.main__change-car') as HTMLElement;
     const winnersSection = document.querySelector('.winners') as HTMLElement;
     if (container) {
+      const errorElement = container.querySelector('.main__error-server');
+      if (errorElement) {
+        errorElement.remove();
+      }
       if (cars && totalCount) {
         const mainWrapper = document.querySelector('.main__wrapper');
         if (mainWrapper) {
