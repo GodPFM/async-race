@@ -1,0 +1,22 @@
+.footer {
+  flex-shrink: 0;
+}
+
+.footer__wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer__rs-logo {
+  max-height: 20px;
+}
+
+.footer__github-logo {
+  margin-right: 10px;
+}
+
+.footer__information {
+  display: flex;
+  text-decoration: none;
+}

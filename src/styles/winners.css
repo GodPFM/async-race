@@ -1,0 +1,48 @@
+.winners__button {
+  margin-bottom: 10px;
+}
+
+.winners__table {
+  text-align: center;
+}
+
+.winners__table td {
+  min-width: 100px;
+  user-select: none;
+}
+
+.winners__table-wins,
+.winners__table-best-time {
+  cursor: pointer;
+}
+
+.winners__table-best-time {
+  width: 190px;
+}
+
+.winners__table-wins div,
+.winners__table-best-time div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.winners__arrow {
+  max-height: 15px;
+}
+
+.winners__arrow.rotate {
+  transform: rotate(180deg);
+}
+
+.winners__table-container {
+  overflow-x: auto;
+}
+
+.winners__table th {
+  background-color: rgb(188, 6, 52);
+}
+
+.winners__table th:hover {
+  background-color: rgba(188, 6, 52, 0.7);
+}
