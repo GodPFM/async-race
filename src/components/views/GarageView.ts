@@ -383,8 +383,16 @@ export class GarageView extends EventEmitter {
     window.cancelAnimationFrame(carRequestId);
     const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
     const carFireImage = item.querySelector('.main__car-fire') as HTMLElement;
-    if (carFireImage) {
-      carFireImage.hidden = false;
+    const carIcon = item.querySelector('.main__car-images') as HTMLElement;
+    const trackElement = document.querySelector('.main__car-track');
+    if (carFireImage && carIcon && trackElement) {
+      const carIconStyles = getComputedStyle(carIcon);
+      const carIconLeft = carIconStyles.getPropertyValue('left');
+      const trackWidth = getComputedStyle(trackElement).width;
+      const leftInPercent = (parseInt(carIconLeft, 10) / parseInt(trackWidth, 10)) * 100;
+      if (carFireImage && leftInPercent < 100) {
+        carFireImage.hidden = false;
+      }
     }
   }
 
