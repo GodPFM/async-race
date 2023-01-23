@@ -362,7 +362,6 @@ export class GarageView extends EventEmitter {
   }
 
   carDrive(id: string, isSuccess: boolean, isRace: boolean) {
-    console.log(this.idToReset);
     const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
     if (item) {
       const velocity = Number(item.dataset.velocity);
