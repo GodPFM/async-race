@@ -133,7 +133,12 @@ export class WinnersView extends EventEmitter {
       if (pageField) {
         const page = Number(pageField.textContent) + 1;
         const items = document.querySelectorAll('.winners__row').length;
-        if (items === 10) {
+        const totalCount = document.querySelector('.winners__count');
+        let totalCountNumber = 0;
+        if (totalCount) {
+          totalCountNumber = Number(totalCount.textContent);
+        }
+        if (items === 10 && Math.ceil(totalCountNumber / 10) === page) {
           pageField.textContent = String(page);
           this.emit('CHANGE_WINNERS_TABLE', page, this.lastSort, true);
         }
