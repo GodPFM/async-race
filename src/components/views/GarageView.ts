@@ -382,8 +382,11 @@ export class GarageView extends EventEmitter {
         const singleCarAnimation = (time: DOMHighResTimeStamp) => {
           if (!start) start = time;
           const progress = time - start;
-          const leftNewValue = (progress * velocity) / (distance / 100);
+          let leftNewValue = (progress * velocity) / (distance / 100);
           if (leftNewValue >= 90) {
+            if (leftNewValue > 98) {
+              leftNewValue = 98;
+            }
             if (isRace && !this.isRaceReset && !this.idToReset[Number(id)]) {
               if (!name) {
                 name = '';
