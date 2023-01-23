@@ -110,7 +110,6 @@ export class WinnersView extends EventEmitter {
     const pageField = document.querySelector('.winners__page-number');
     tableHead?.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
-      console.log(target);
       if (pageField) {
         const page = Number(pageField.textContent);
         if (target.closest('.winners__table-best-time')) {

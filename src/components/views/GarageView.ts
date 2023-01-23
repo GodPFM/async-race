@@ -166,7 +166,6 @@ export class GarageView extends EventEmitter {
         const totalCountField = document.querySelector('.main__garage-count-number');
         if (totalCountField) {
           const totalNumber = Number(totalCountField.textContent);
-          console.log(Math.ceil(totalNumber / 7), Number(number) + 1);
           if (Math.ceil(totalNumber / 7) >= Number(number) + 1) {
             this.emit('CHANGE_GARAGE_PAGE', String(Number(number) + 1));
           }
@@ -337,6 +336,10 @@ export class GarageView extends EventEmitter {
     if (item) {
       item.dataset.velocity = String(carParams.velocity);
       item.dataset.distance = String(carParams.distance);
+      const startButton = item.querySelector('.main__car-start') as HTMLButtonElement;
+      if (startButton) {
+        startButton.disabled = true;
+      }
       if (!isRaceAll) {
         this.emit('SWITCH_DRIVE_MODE', id);
       }

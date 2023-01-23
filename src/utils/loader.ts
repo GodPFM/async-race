@@ -149,7 +149,6 @@ export async function stopEngine(id: string, isAll: boolean): Promise<CarParam |
 
 export async function carStart(id: string): Promise<boolean | null> {
   try {
-    console.log(id);
     const url = `http://127.0.0.1:3000/engine?id=${id}&status=drive`;
     const response = await fetch(url, {
       method: 'PATCH',
@@ -188,7 +187,6 @@ export async function getWinner(id: string): Promise<WinnerParams | boolean | nu
 export async function createWinner(winnerParams: WinnerParams): Promise<boolean> {
   try {
     const url = `http://127.0.0.1:3000/winners`;
-    console.log(JSON.stringify(winnerParams));
     const response = await fetch(url, {
       method: 'POST',
       headers: {
