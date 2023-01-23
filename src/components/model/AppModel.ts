@@ -24,7 +24,8 @@ type AppModelEventsName =
   | 'GET_CARS_FOR_CHANGE_PAGE'
   | 'CAR_RESETED'
   | 'CAR_READY'
-  | 'WINNERS_READY';
+  | 'WINNERS_READY'
+  | 'CAR_BROKEN';
 export type AppModelInstance = InstanceType<typeof AppModel>;
 
 export class AppModel extends EventEmitter {
@@ -136,6 +137,9 @@ export class AppModel extends EventEmitter {
   async startCarRace(id: string) {
     this.isWinnerInRace = false;
     const result = await carStart(id);
+    if (result === null) {
+      this.emit('CAR_BROKEN', id);
+    }
     return result;
   }
 

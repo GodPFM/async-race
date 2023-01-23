@@ -94,6 +94,14 @@ export class GarageView extends EventEmitter {
     model.on('CAR_READY', (data, itemData, carParams, isRaceAll) => {
       if (isRaceAll !== undefined) {
         this.prepareCar(data, carParams, isRaceAll);
+        if (!isRaceAll) {
+          this.carDrive(data, true, false);
+        }
+      }
+    });
+    model.on('CAR_BROKEN', (data) => {
+      if (data) {
+        this.crashCar(data);
       }
     });
   }
@@ -344,38 +352,39 @@ export class GarageView extends EventEmitter {
       item.querySelector('.main__car-start')?.classList.add('ready');
       (item.querySelector('.main__car-stop') as HTMLButtonElement).disabled = false;
       const carContainer = item.querySelector('.main__car-images') as HTMLElement;
-      const carFireImage = item.querySelector('.main__car-fire') as HTMLElement;
       if (carContainer) {
         let start: number | null = null;
-        const randNumber = Math.floor(Math.random() * (80 - 20) + 20);
         const singleCarAnimation = (time: DOMHighResTimeStamp) => {
           if (!start) start = time;
           const progress = time - start;
           let leftNewValue = (progress * velocity) / (distance / 100);
-          if (isSuccess) {
-            if (leftNewValue > 100) {
-              leftNewValue = 100;
-              if (isRace && !this.isRaceReset) {
-                if (!name) {
-                  name = '';
-                }
-                this.switchStateButtons(false);
-                this.emit('WINNER_FOUND', id, { name, color: '', id: Number(id), time: progress });
+          if (leftNewValue > 100) {
+            leftNewValue = 100;
+            if (isRace && !this.isRaceReset) {
+              if (!name) {
+                name = '';
               }
-            }
-          } else if (leftNewValue > randNumber) {
-            leftNewValue = randNumber;
-            if (carFireImage) {
-              carFireImage.hidden = false;
+              this.switchStateButtons(false);
+              this.emit('WINNER_FOUND', id, { name, color: '', id: Number(id), time: progress });
             }
           }
           carContainer.style.left = String(`${leftNewValue}%`);
-          if ((leftNewValue < 100 && isSuccess) || (leftNewValue < randNumber && !isSuccess)) {
+          if (leftNewValue < 100) {
             this.animationCarData[id] = requestAnimationFrame(singleCarAnimation);
           }
         };
         this.animationCarData[id] = window.requestAnimationFrame(singleCarAnimation);
       }
+    }
+  }
+
+  crashCar(id: string) {
+    const carRequestId = this.animationCarData[id];
+    window.cancelAnimationFrame(carRequestId);
+    const item = document.querySelector(`.main__race-car[data-id="${id}"`) as HTMLElement;
+    const carFireImage = item.querySelector('.main__car-fire') as HTMLElement;
+    if (carFireImage) {
+      carFireImage.hidden = false;
     }
   }
 

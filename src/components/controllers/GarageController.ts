@@ -45,12 +45,6 @@ export class GarageController {
     });
     this.view.on('SWITCH_DRIVE_MODE', async (data) => {
       const result = await this.model.startCarRace(data);
-      if (result) {
-        this.view.carDrive(data, true, false);
-      }
-      if (result === null) {
-        this.view.carDrive(data, false, false);
-      }
     });
     this.view.on('CAR_RESET_ALL', async (data, itemData, carItems) => {
       const arrayWithIdToReset: Array<string> = [];
@@ -78,18 +72,11 @@ export class GarageController {
       await Promise.allSettled(carsToReset);
       const result = arrayWithIdToReady.map((item) => this.model.startCarEngine(item, true));
       await Promise.allSettled(result);
-      const startRacePromiseArray = arrayWithIdToReady.map((item) => this.model.startCarRace(item));
-      await Promise.allSettled(startRacePromiseArray).then((value) => {
-        this.view.showModalWindow('loading');
-        value.forEach((el, index) => {
-          if (el) {
-            this.view.carDrive(arrayWithIdToReady[index], true, true);
-          }
-          if (el === null) {
-            this.view.carDrive(arrayWithIdToReady[index], false, true);
-          }
-        });
+      arrayWithIdToReady.forEach((el) => {
+        this.view.carDrive(el, true, true);
       });
+      this.view.showModalWindow('loading');
+      const startRacePromiseArray = arrayWithIdToReady.map((item) => this.model.startCarRace(item));
     });
     this.view.on('WINNER_FOUND', (id, itemData) => {
       if (!this.model.isWinnerInRace) {
