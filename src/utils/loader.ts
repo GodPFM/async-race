@@ -187,6 +187,7 @@ export async function getWinner(id: string): Promise<WinnerParams | boolean | nu
 export async function createWinner(winnerParams: WinnerParams): Promise<boolean> {
   try {
     const url = `http://127.0.0.1:3000/winners`;
+    console.log(JSON.stringify(winnerParams));
     const response = await fetch(url, {
       method: 'POST',
       headers: {

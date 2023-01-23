@@ -142,7 +142,7 @@ export class WinnersView extends EventEmitter {
         if (totalCount) {
           totalCountNumber = Number(totalCount.textContent);
         }
-        if (items === 10 && Math.ceil(totalCountNumber / 10) === page) {
+        if (items === 10 && Math.ceil(totalCountNumber / 10) >= page) {
           pageField.textContent = String(page);
           this.emit('CHANGE_WINNERS_TABLE', page, this.lastSort, true);
         }
