@@ -1,0 +1,51 @@
+@import "footer.css";
+@import "header.css";
+@import "modal-window.css";
+@import "garage.css";
+@import "winners.css";
+
+* {
+  box-sizing: border-box;
+  font-family: sans-serif;
+  color: #f0f1f2;
+}
+
+button {
+  cursor: pointer;
+  background-color: #80858b;
+  border-radius: 5px;
+  border: none;
+}
+
+button:hover {
+  background-color: #9fa5ad;
+}
+
+button:disabled {
+  cursor: inherit;
+  background-color: #53575c;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background-color: #39434d;
+  margin: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+main {
+  flex-grow: 1;
+}
+
+.wrapper {
+  max-width: 75%;
+  margin: 0 auto;
+}
+
+.hidden {
+  display: none;
+}
+
