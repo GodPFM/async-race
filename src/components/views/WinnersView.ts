@@ -26,6 +26,15 @@ export class WinnersView extends EventEmitter {
         const result = await this.model.getWinners(String(this.page));
         if (result) {
           this.build(result[1]);
+          if (!result[0].length) {
+            const pageNumber = document.querySelector('.winners__page-number');
+            const prevButton = document.querySelector('.winners__button--prev') as HTMLButtonElement;
+            if (pageNumber && prevButton) {
+              if (Number(pageNumber.textContent) > 1) {
+                prevButton.click();
+              }
+            }
+          }
           this.buildRows(result[0]);
         }
       }
